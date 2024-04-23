@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('add_on', function (Blueprint $table) {
             $table->id();
-            $table->string('Name');
+            $table->string('project_id');
+          
+
+            // $table->integer('project_id')->nullable();;
+            $table->string('userId');
             $table->string('Description');
             $table->string('Price');
             $table->timestamps();

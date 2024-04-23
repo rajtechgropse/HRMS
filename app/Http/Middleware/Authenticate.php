@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Closure;
 
-class RedirectIfAuthenticated
+class Authenticate
 {
     /**
      * Handle an incoming request.
@@ -19,14 +19,15 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        die('RedirectIfAuthenticated');
-        if ($guard == "admin" && Auth::guard($guard)->check()) {
 
-            return redirect('dashboard'); //name of the route to be redirected on successful admin login
+        if (!Auth::check()) {
+
+            return redirect('login'); 
         }
-        if (Auth::guard($guard)->check()) {
-            return redirect(dd('hlw')); //name of the route to be redirected on successful user login
-        }
+        $user = (Auth::user());
+        // dd($user);
+        // dd($user->type);
+       
         return $next($request);
     }
 }

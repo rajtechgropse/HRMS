@@ -1,59 +1,64 @@
 <?php
-  
+
 namespace App\Models;
-  
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-  
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-  
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
 
-     */
     protected $fillable = [
+        'employee_Id',
         'name',
         'email',
+        'userDepartment',
+        'userDesignation',
         'password',
-        'type'
+        'role_id',
+        'status'
     ];
-  
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
 
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
-  
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
 
-     */
-   
- 
-    /**
-     * Interact with the user's first name.
-     *
-     * @param  string  $value
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function type(): Attribute
+    protected function userDepartment(): Attribute
     {
         return new Attribute(
-            get: fn ($value) =>  ["user", "admin", "manager"][$value],
+            get: fn ($value) =>  ["Delivery", "Marketing", "Admin", "HR", "Business"][$value],
         );
     }
+
+    public function roles()
+    {
+        return  $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    public function hasRole($role)
+    {
+        return $this->roles->contains('name', $role);
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(AddProjects::class, 'projects', 'user_id', 'project_id')->withPivot('allocation');
+    }
+
+    public function addworkesEmployees()
+    {
+        return $this->hasMany(AddworkesEmployee::class, 'userId', 'userId');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(AddProjects::class, 'project_id');
+    }
 }
+

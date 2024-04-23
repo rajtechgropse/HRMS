@@ -11,26 +11,31 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('add_projects', function (Blueprint $table) {
+      
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('ProjectCompany');
-            $table->string('ProjectName');
-            $table->decimal('ProjectBudget', 10, 2);
-            $table->string('ProjectType');
-            $table->string('ProjectManager');
-            $table->string('Csm');
-            $table->string('Contract');
-            $table->string('Tags');
-            $table->string('Milestone');
-            $table->string('Address');
-            $table->string('Comments');
-            $table->string('timezone_offset');
-            $table->string('cilentname');
-            $table->string('cilentemail');
-            $table->string('companyname');
-            $table->string('cilentphone');
-            $table->date('projectstartdate');
+            $table->integer('userId');
+            $table->string('projectcompany');
+            $table->string('projectname');
+            $table->string('currency')->notNull();
+
+            $table->decimal('projectbudget', 10, 2)->notNull();
+            $table->string('projecttype');
+            $table->string('csm');
+            $table->string('contract');
+            $table->string('tags');
             $table->string('status');
+
+            $table->string('sc');
+            $table->string('cilentname');
+            $table->string('cilentemail')->unique();
+
+            $table->string('companyname');
+            $table->bigInteger('cilentphone');
+            $table->string('country');
+            $table->string('city');
+            $table->date('projectstartdate');
+            $table->date('projectenddate');
             $table->timestamps();
         });
     }

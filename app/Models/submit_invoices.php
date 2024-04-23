@@ -9,12 +9,8 @@ class submit_invoices extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'Projectcompany', 
-        'Companyname',
-        'Cilentname',
-        'Cilentemail',
-        'Cilentphone',
-        'Address',
+        'project_id',
+        'usersId',
         'Bill_Genrate_Date',
         'DueDate',
         'Description',
@@ -26,6 +22,13 @@ class submit_invoices extends Model
         'PaymentOption',
         'status',
     ];
-    protected $table='submit_invoices';
+
+
+    public function project()
+    {
+        return $this->belongsTo(AddProjects::class, 'project_id');
+    }
+
+    protected $table = 'submit_invoices';
     protected $guarded = [];
 }

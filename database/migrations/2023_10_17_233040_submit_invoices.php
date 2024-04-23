@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('submit_invoices', function (Blueprint $table) {
             $table->id();
-            $table->string('Projectcompany');
-            $table->string('Companyname');
-            $table->string('Cilentname');
-            $table->string('Cilentemail');
-            $table->string('Cilentphone');
-            $table->string('Address');
+            $table->string('project_id');
+            $table->string('usersId');
             $table->string('Bill_Genrate_Date');
             $table->string('DueDate');
-         $table->integer('status');
+            $table->integer('status');
             $table->string('Description');
             $table->string('Quantity');
             $table->string('Price');

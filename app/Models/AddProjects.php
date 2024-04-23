@@ -9,9 +9,15 @@ class AddProjects extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'ProjectCompany', 'ProjectName', 'ProjectBudget', 'ProjectType',
-        'ProjectManager', 'Csm', 'Contract', 'Tags', 'Milestone',
-        'Address','Comments', 'timezone_offset', 'cilentname', 'cilentemail',
-        'companyname', 'cilentphone', 'projectstartdate', 'status',
+        'userId', 'projectcompany', 'projectname','currency', 'projectbudget', 'projecttype', 
+         'csm', 'tags', 'sc','status',
+        'cilentname', 'cilentemail', 'companyname', 'cilentphone', 'country','city',
+        'projectstartdate','projectenddate', 
     ];
+    protected $table='projects';
+
+    public function employee()
+    {
+        return $this->belongsTo(AddWorkesEmployee::class, 'userId', 'userId'); 
+    }
 }
