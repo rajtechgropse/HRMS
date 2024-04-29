@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\employees;
+use App\Models\AddworkesEmployee;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -24,7 +25,9 @@ class UsersController extends Controller
     }
     public function dashboard()
     {
-        return view('users.dashboard');
+        $usersDetails = Auth::user()->employee_Id;
+        $usersDetailsGet = AddworkesEmployee::where('employee_Id', $usersDetails)->with('project')->get();
+        return view('users.usersDashboard', compact('usersDetailsGet'));
     }
     public function userView()
     {
