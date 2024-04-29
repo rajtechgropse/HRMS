@@ -17,7 +17,7 @@ class UsersController extends Controller
         if (Auth::attempt($credentials)) {
             if (Auth::user()->userDepartment == 'Delivery') {
                 return redirect('/user/dashboard');
-            } 
+            }
         } else {
             return redirect()->route('loginpage')->with('error', 'Invalid email or password');
         }
@@ -28,7 +28,7 @@ class UsersController extends Controller
     }
     public function userView()
     {
-        
+
         $usersDetails = Auth::user()->employee_Id;
         $employeeDetails = employees::where('id', $usersDetails)->first();
         return view('users.usersProfile', compact('employeeDetails'));

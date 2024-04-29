@@ -18,17 +18,13 @@
                     {{ session('status') }}
                 </div>
             @endif
-
             <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between">
                     <h2>Update Employee</h2>
                     <i class="bi bi-x"></i>
-
-
                 </div>
                 @foreach ($employeeData as $data)
                     <form method="POST" action="{{ route('employeeUpdateStore') }}">
-
                         @csrf
                         <div class="row">
                             <div class="col-md-4 mb-3">
@@ -48,7 +44,6 @@
                                     value="{{ $data['pannumber'] }}">
                             </div>
                         </div>
-
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="name" class="form-label">Name</label>
@@ -126,7 +121,6 @@
                                 <input type="date" class="form-control" name="joiningdate"
                                     value="{{ $data['joiningdate'] }}">
                             </div>
-
                         </div>
                         <div class="row">
                             <div class="col-md-4 mb-3">
@@ -139,9 +133,7 @@
                                 <input type="text" class="form-control" name="higestqualification"
                                     value="{{ $data['higestqualification'] }}">
                             </div>
-
                         </div>
-
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="name" class="form-label">Contact Details</label>
@@ -153,7 +145,6 @@
                                 <input type="text" class="form-control" name="aadharnumber"
                                     value="{{ $data['aadharnumber'] }}">
                             </div>
-
                         </div>
                 @endforeach
                 <div class="row mt-3">

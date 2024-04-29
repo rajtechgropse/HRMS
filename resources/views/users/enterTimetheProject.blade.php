@@ -9,6 +9,15 @@
                 {{ session('error') }}
             </div>
         @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form id="week-start-form" method="post" action="{{ route('user.enterTimeInProject') }}"
             onsubmit="return validateTotalHours()">
             @csrf
@@ -134,17 +143,11 @@
 
                                         </div>
                                         <div class="box_same3">
-                                            <div class="dropdown">
-                                                <button class="btn btn-info dropdown-toggle" type="button"
-                                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Billable
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                                </ul>
-                                            </div>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#">Billable</a></li>
+                                                <li><a class="dropdown-item" href="#">Non-Billable</a></li>
+                                            </ul>
+
                                         </div>
 
                                         <div class="box_same3">
@@ -164,9 +167,9 @@
 
                                         </div>
                                         <div class="box_same3">
-                                            <input type="text" value="{{ $time['thursday_hours'] }}"
-                                                name="thursday[]" id="thursday_{{ $key + 1 }}" maxlength="4"
-                                                size="4" oninput="calculateTotalHoursstatic({{ $key + 1 }})">
+                                            <input type="text" value="{{ $time['thursday_hours'] }}" name="thursday[]"
+                                                id="thursday_{{ $key + 1 }}" maxlength="4" size="4"
+                                                oninput="calculateTotalHoursstatic({{ $key + 1 }})">
 
                                         </div>
                                         <div class="box_same3">
@@ -215,7 +218,7 @@
                                         <div class="dropdown">
                                             <button class="btn btn-info dropdown-toggle" type="button"
                                                 id="selectedProjectButton_1" data-bs-toggle="dropdown"
-                                                aria-expanded="true">
+                                                aria-expanded="true" required>
                                                 Select Project
                                             </button>
                                             <ul class="dropdown-menu" id="dropdownMenu_1">
@@ -238,12 +241,12 @@
                                                 Billable
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                                <li><a class="dropdown-item" href="#">Billable</a></li>
+                                                <li><a class="dropdown-item" href="#">Non-Billable</a></li>
                                             </ul>
                                         </div>
                                     </div>
+
 
                                     <div class="box_same3">
                                         <input type="text" name="monday[]" id="monday_1" maxlength="4"
@@ -287,7 +290,7 @@
                                         <h6 class="fw-bold ps-3">Description</h6>
                                     </div>
                                     <input type="text" name="description[]" id="description1"
-                                        class="manage_description_input form-control" placeholder="Description">
+                                        class="manage_description_input form-control" placeholder="Description" required>
                                     <i class="fa-solid fa-upload fs-5 ms-4"></i>
                                 </div>
                             </div>
@@ -307,19 +310,61 @@
         </form>
     </div>
 
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function saveFormData() {
-            var baseUrl = "{{ url('/') }}";
-            var selectedDate = document.getElementById("selected-date").value;
-            var routeUrl = baseUrl + "/user/user.enterDateInProjectTempSave?selected_date=" + selectedDate;
-            document.getElementById("week-start-form").action = routeUrl;
-            document.getElementById("week-start-form").submit();
+        function validateFormFields() {
+            var selectedProjectId = document.getElementById('selectedProjectId_1').value;
+            var descriptionInput = document.getElementById('description1').value.trim();
+
+            if (!selectedProjectId) {
+                alert("Please select a project.");
+                return false;
+            }
+            if (descriptionInput === "") {
+                alert("Please enter a description.");
+                return false;
+            }
+            return true;
         }
+
+        function saveFormData() {
+            var isFormValid = validateFormFields();
+
+            if (isFormValid) {
+                var baseUrl = "{{ url('/') }}";
+                var selectedDate = document.getElementById("selected-date").value;
+                var routeUrl = baseUrl + "/user/user.enterDateInProjectTempSave?selected_date=" + selectedDate;
+                document.getElementById("week-start-form").action = routeUrl;
+                document.getElementById("week-start-form").submit();
+            }
+        }
+
 
 
         function updateFormAction() {
             var selectedDate = document.getElementById("selected-date").value;
+            var selectedDateObj = new Date(selectedDate);
+            var today = new Date();
+
+            if (selectedDateObj.getDay() !== 1) {
+                alert('Please select only Mondays Of Weeks.');
+                return;
+            }
+
+            if (selectedDateObj > today) {
+                alert('Please select a date on or before today.');
+                document.getElementById('selected-date').value = localStorage.getItem('selectedDate');
+                return;
+            }
+
+            var fourteenDaysAgo = new Date(today);
+            fourteenDaysAgo.setDate(today.getDate() - 20);
+
+            if (selectedDateObj < fourteenDaysAgo) {
+                alert('Please select a date within the past 2 weeks.');
+                return;
+            }
 
             $.ajax({
                 url: "{{ route('check.data.exists') }}",
@@ -329,9 +374,9 @@
                 },
                 success: function(response) {
                     if (response.exists) {
-                        alert('Timesheet already submited for this date.');
+                        alert('Timesheet already submitted for this date.');
                     } else {
-                        localStorage.setItem('selectedDate', selectedDate);
+                        var baseUrl = "{{ url('/') }}";
                         var routeUrl = baseUrl + "/user/user.enterDateInProjectUpdate?selected_date=" +
                             selectedDate;
                         window.location.href = routeUrl;
@@ -340,6 +385,9 @@
                 error: function(xhr, status, error) {
                     console.error(error);
                     alert('An error occurred while checking data existence.');
+                },
+                complete: function() {
+                    localStorage.setItem('selectedDate', selectedDate);
                 }
             });
         }
@@ -473,13 +521,11 @@
             var saturdayValue1 = parseFloat(document.getElementById(`saturday_1`).value) || 0;
 
             var total = mondayValue1 + tuesdayValue1 + wednesdayValue1 + thursdayValue1 + fridayValue1 + saturdayValue1;
-            console.log(total);
             document.getElementById(`total_Hours_1`).value = total.toFixed(2);
         }
 
         function calculateTotalHoursstatic(index) {
             var mondayValue = parseFloat(document.getElementById(`monday_${index}`).value) || 0;
-            // console.log(mondayValue);
             var tuesdayValue = parseFloat(document.getElementById(`tuesday_${index}`).value) || 0;
             var wednesdayValue = parseFloat(document.getElementById(`wednesday_${index}`).value) || 0;
             var thursdayValue = parseFloat(document.getElementById(`thursday_${index}`).value) || 0;
@@ -514,5 +560,68 @@
                 });
             }
         });
+
+        function validateDescription() {
+            var descriptionInputs = document.getElementsByName('description[]');
+            for (var i = 0; i < descriptionInputs.length; i++) {
+                if (descriptionInputs[i].value.trim() === '') {
+                    alert('Please enter a description for all entries.');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var submitButton = document.querySelector('[type="submit"]');
+            if (submitButton) {
+                submitButton.addEventListener('click', function(event) {
+                    var isDescriptionValid = validateDescription();
+                    if (!isDescriptionValid) {
+                        event.preventDefault();
+                    }
+                });
+            }
+        });
     </script>
+
+    <script>
+        function validateProjectSelection() {
+            var projectDropdown = document.getElementById('dropdownMenu_1');
+            var selectedProjectId = projectDropdown.getAttribute('data-selected-project-id');
+
+            if (!selectedProjectId) {
+                alert("Please select a project.");
+                return false;
+            }
+            return true;
+        }
+
+        function validateDescriptionInput() {
+            var descriptionInput = document.getElementById('description1');
+            var descriptionValue = descriptionInput.value.trim();
+
+            if (descriptionValue === "") {
+                alert("Please enter a description.");
+                return false;
+            }
+            return true;
+        }
+
+        function validateForm() {
+            var isProjectValid = validateProjectSelection();
+            var isDescriptionValid = validateDescriptionInput();
+
+            return isProjectValid && isDescriptionValid;
+        }
+
+        document.getElementById('yourFormId').addEventListener('submit', function(event) {
+            if (!validateForm()) {
+                event.preventDefault();
+            }
+        });
+    </script>
+
 @endsection

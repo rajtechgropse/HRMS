@@ -1,6 +1,5 @@
 @extends('header')
 @section('title', 'All Employees')
-
 @section('content')
     <div class="container-fluid">
         @if (Session::has('success'))
@@ -8,11 +7,6 @@
                 {{ Session::get('success') }}
             </div>
         @endif
-
-
-
-
-
         <div class="row mt-4 mb-3">
             <div class="col-md-6">
                 <h3>Employees</h3>
@@ -30,7 +24,6 @@
                 </form>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -38,14 +31,14 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">Employee Actions</h5>
                             <div>
-                                @if (isset($modules[4]['employeeView.export']) && $modules[4]['employeeView.export'] == 1)
+                                @if (isset($modules[3]['employeeView.export']) && $modules[3]['employeeView.export'] == 1)
                                     <a href="{{ route('employeeExportCSV') }}" class="btn btn-light">Export CSV</a>
                                 @endif
-                                @if (isset($modules[4]['employeeView.import']) && $modules[4]['employeeView.import'] == 1)
-                                <button type="button" class="btn btn-light" data-toggle="modal" data-target="#importCSVModal">Import CSV</button>
-
+                                @if (isset($modules[3]['employeeView.import']) && $modules[3]['employeeView.import'] == 1)
+                                    <button type="button" class="btn btn-light" data-toggle="modal"
+                                        data-target="#importCSVModal">Import CSV</button>
                                 @endif
-                                @if (isset($modules[4]['employeeView.create']) && $modules[4]['employeeView.create'] == 1)
+                                @if (isset($modules[3]['employeeView.create']) && $modules[3]['employeeView.create'] == 1)
                                     <a href="{{ route('employeeManagement') }}" class="btn btn-light">Add Employee</a>
                                 @endif
                                 <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete
@@ -84,7 +77,7 @@
                                             <td>{{ $data['officialemail'] }}</td>
                                             <td>{{ $data['personalemail'] }}</td>
                                             <td>
-                                                @if (isset($modules[4]['employeeView.edit']) && $modules[4]['employeeView.edit'] == 1)
+                                                @if (isset($modules[3]['employeeView.edit']) && $modules[3]['employeeView.edit'] == 1)
                                                     <a href="{{ route('employeeupdate', $data->id) }}"
                                                         class="btn btn-success btn-sm"><i class="fas fa-edit"></i> Edit</a>
                                                 @endif
@@ -99,7 +92,8 @@
             </div>
         </div>
 
-        <div class="modal fade" id="importCSVModal" tabindex="-1" role="dialog" aria-labelledby="importCSVModalLabel" aria-hidden="true">
+        <div class="modal fade" id="importCSVModal" tabindex="-1" role="dialog" aria-labelledby="importCSVModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -144,12 +138,9 @@
             }
         }
     </script>
-<!-- Bootstrap CSS -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap JS -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 @endsection

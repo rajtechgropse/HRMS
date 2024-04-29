@@ -61,4 +61,3 @@ class User extends Authenticatable
         return $this->belongsTo(AddProjects::class, 'project_id');
     }
 }
-

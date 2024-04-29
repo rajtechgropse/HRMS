@@ -17,13 +17,10 @@ class AddworkemployeeController extends Controller
     public function addWorksEmployee($id)
     {
         $modules = Session::get('user_modules_' . auth()->id());
-    
-        // Find the project data by ID
+
         $projectData = AddProjects::find($id);
-    
-        // Check if project data exists
+
         if ($projectData) {
-            // Retrieve the assigned employees for the project
             $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)->get();
             $employee_Id = $addworkesEmployees->pluck('employee_Id');
             $usersDetails = User::whereIn('employee_Id', $employee_Id)->get();
@@ -34,30 +31,23 @@ class AddworkemployeeController extends Controller
                 'usersDetails' => $usersDetails
             ]);
         } else {
-
         }
     }
-    // This controller method performs the following steps:
-    // public function getUsersByType($type)
-    // {
-    //     $users = User::where('type', $type)->get();
-    //     return response()->json($users);
-    // }
-    public function fetchUsersByDesignation($designation) {
+
+    public function fetchUsersByDesignation($designation)
+    {
         $users = User::where('designation', $designation)->get();
         dd($users);
         return response()->json($users);
     }
-    
+
 
     public function addworkesEmployeeStore(Request $request)
     {
-        // dd($request->all());
         $employeeId = $request->input('employee_id');
         $addworkesEmployee = [
             'project_id' => $request->input('projectId'),
             'userDepartment' => $request->input('userDepartment'),
-
             'userDesignation' => $request->input('userDesignation'),
             'employee_Id' => $request->input('employee_Id'),
             'allocationpercentage' => $request->input('allocationpercentage'),

@@ -32,97 +32,88 @@ class TimesheetController extends Controller
 
         return view('users.time_Sheet', compact('minDate', 'maxDate'));
     }
+
     public function enterDateInProject(Request $request)
     {
-    
         $userLoginDetails = Auth::user()->employee_Id;
         $selectedDate = $request->input('week_start_date');
-    
+
         $existingEntry = TimeEntry::where('employee_id', $userLoginDetails)
-                                    ->where('date', $selectedDate)
-                                    ->where('status', 1)
-                                    ->exists();
-    
-        if ($existingEntry) {
-            return redirect()->back()->with('error', 'Timesheet already submited for this date.');
-        }
-    
-        $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
-    
-    
-        $datesAndDays = [];
-        $datesAndDays[] = [
-            'date' => $startDate->toDateString(),
-            'day' => $startDate->format('l'),
-        ];
-    
-        for ($i = 1; $i <= 6; $i++) {
-            $nextDate = $startDate->copy()->addDay($i);
-    
-            $datesAndDays[] = [
-                'date' => $nextDate->toDateString(),
-                'day' => $nextDate->format('l'),
-            ];
-        }
-    
-        Session::put('week_dates', $datesAndDays);
-        $weekDates = Session::get('week_dates');
-    
-        $timeEntries = TimeEntriesTemp::where('date', $selectedDate)
-            ->where('employee_id', $userLoginDetails)
-            ->get()->toArray();
-    
-        $alreadyFilledData = TimeEntriesTemp::where('date', $selectedDate)
-            ->with('project')
+            ->where('date', $selectedDate)
+            ->where('status', 1)
             ->get();
-    
-        $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
-    
-        $datesAndDays = [];
-    
-        $datesAndDays[] = [
-            'date' => $startDate->toDateString(),
-            'day' => $startDate->format('l'),
-        ];
-    
-        for ($i = 1; $i <= 6; $i++) {
-            $nextDate = $startDate->copy()->addDay($i);
-    
-            $datesAndDays[] = [
-                'date' => $nextDate->toDateString(),
-                'day' => $nextDate->format('l'),
-            ];
+
+        if ($existingEntry->isNotEmpty()) {
+            $projects = $this->getProjects();
+            $datesAndDays = $this->setupDatesAndDays($selectedDate);
+            $weekDates = Session::get('week_dates');
+
+            return view('users.submite_Data_View', compact('projects', 'datesAndDays', 'weekDates', 'existingEntry'));
+        } else {
+            $timeEntries = TimeEntriesTemp::where('date', $selectedDate)
+                ->where('employee_id', $userLoginDetails)
+                ->get()->toArray();
+
+            $projects = $this->getProjects();
+            $datesAndDays = $this->setupDatesAndDays($selectedDate);
+            $weekDates = Session::get('week_dates');
+
+            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
         }
-    
-        Session::put('week_dates', $datesAndDays);
-    
-        $weekDates = Session::get('week_dates');
+    }
+
+    private function getProjects()
+    {
         $userLoginDetails = Auth::user()->employee_Id;
         $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
             ->with('project')
             ->get();
-    
+
         $projectNames = [];
-    
+        $projectIds = [];
+
         foreach ($assignedProjects as $assignedProject) {
             $projectId = $assignedProject->project->id;
-    
             $projectName = $assignedProject->project->projectname;
             $projectNames[] = $projectName;
             $projectIds[] = $projectId;
         }
-        $projects = array_combine($projectIds, $projectNames);
-        return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
+
+        return array_combine($projectIds, $projectNames);
     }
+
+    private function setupDatesAndDays($selectedDate)
+    {
+        $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
+        $datesAndDays = [];
+
+        $datesAndDays[] = [
+            'date' => $startDate->toDateString(),
+            'day' => $startDate->format('l'),
+        ];
+
+        for ($i = 1; $i <= 6; $i++) {
+            $nextDate = $startDate->copy()->addDay($i);
+
+            $datesAndDays[] = [
+                'date' => $nextDate->toDateString(),
+                'day' => $nextDate->format('l'),
+            ];
+        }
+
+        Session::put('week_dates', $datesAndDays);
+        return $datesAndDays;
+    }
+
     public function checkDataExists(Request $request)
     {
-    $selectedDate = $request->input('selected_date');
+        $selectedDate = $request->input('selected_date');
 
-    $exists = TimeEntry::where('date', $selectedDate)->exists();
+        $exists = TimeEntry::where('date', $selectedDate)->exists();
 
-    return response()->json(['exists' => $exists]);
+        return response()->json(['exists' => $exists]);
     }
-    
+
     public function enterTimeInProjectUpdate(Request $request)
     {
         $userLoginDetails = Auth::user()->employee_Id;
@@ -130,89 +121,84 @@ class TimesheetController extends Controller
         $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
 
         $existingEntry = TimeEntry::where('employee_id', $userLoginDetails)
-        ->where('date', $selectedDate)
-        ->where('status', 1)
-        ->exists();
+            ->where('date', $selectedDate)
+            ->where('status', 1)
+            ->exists();
 
         if ($existingEntry) {
-        return redirect()->back()->with('error', 'Data for this date has already been Submited.');
-        }
-        else{
+            return redirect()->back()->with('error', 'Data for this date has already been Submited.');
+        } else {
             $datesAndDays = [];
 
-        $datesAndDays[] = [
-            'date' => $startDate->toDateString(),
-            'day' => $startDate->format('l'),
-        ];
+            $datesAndDays[] = [
+                'date' => $startDate->toDateString(),
+                'day' => $startDate->format('l'),
+            ];
 
-        for ($i = 1; $i <= 6; $i++) {
-            $nextDate = $startDate->copy()->addDay($i);
+            for ($i = 1; $i <= 6; $i++) {
+                $nextDate = $startDate->copy()->addDay($i);
+
+                $datesAndDays[] = [
+                    'date' => $nextDate->toDateString(),
+                    'day' => $nextDate->format('l'),
+                ];
+            }
+
+            Session::put('week_dates', $datesAndDays);
+            $weekDates = Session::get('week_dates');
+
+            $timeEntries = TimeEntriesTemp::where('date', $selectedDate)
+                ->where('employee_id', $userLoginDetails)
+                ->get()->toArray();
+
+
+
+
+
+            $alreadyFilledData = TimeEntriesTemp::where('date', $selectedDate)
+                ->with('project')
+                ->get();
+
+
+            $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
+
+            $datesAndDays = [];
 
             $datesAndDays[] = [
-                'date' => $nextDate->toDateString(),
-                'day' => $nextDate->format('l'),
+                'date' => $startDate->toDateString(),
+                'day' => $startDate->format('l'),
             ];
+
+            for ($i = 1; $i <= 6; $i++) {
+                $nextDate = $startDate->copy()->addDay($i);
+
+                $datesAndDays[] = [
+                    'date' => $nextDate->toDateString(),
+                    'day' => $nextDate->format('l'),
+                ];
+            }
+
+            Session::put('week_dates', $datesAndDays);
+
+            $weekDates = Session::get('week_dates');
+            $userLoginDetails = Auth::user()->employee_Id;
+            $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
+                ->with('project')
+                ->get();
+
+            $projectNames = [];
+
+
+            foreach ($assignedProjects as $assignedProject) {
+                $projectId = $assignedProject->project->id;
+
+                $projectName = $assignedProject->project->projectname;
+                $projectNames[] = $projectName;
+                $projectIds[] = $projectId;
+            }
+            $projects = array_combine($projectIds, $projectNames);
+            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
         }
-
-        Session::put('week_dates', $datesAndDays);
-        $weekDates = Session::get('week_dates');
-
-        $timeEntries = TimeEntriesTemp::where('date', $selectedDate)
-            ->where('employee_id', $userLoginDetails)
-            ->get()->toArray();
-
-
-
-
-
-        $alreadyFilledData = TimeEntriesTemp::where('date', $selectedDate)
-            ->with('project')
-            ->get();
-
-
-        $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
-
-        $datesAndDays = [];
-
-        $datesAndDays[] = [
-            'date' => $startDate->toDateString(),
-            'day' => $startDate->format('l'),
-        ];
-
-        for ($i = 1; $i <= 6; $i++) {
-            $nextDate = $startDate->copy()->addDay($i);
-
-            $datesAndDays[] = [
-                'date' => $nextDate->toDateString(),
-                'day' => $nextDate->format('l'),
-            ];
-        }
-
-        Session::put('week_dates', $datesAndDays);
-
-        $weekDates = Session::get('week_dates');
-        $userLoginDetails = Auth::user()->employee_Id;
-        $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
-            ->with('project')
-            ->get();
-
-        $projectNames = [];
-
-
-        foreach ($assignedProjects as $assignedProject) {
-            $projectId = $assignedProject->project->id;
-
-            $projectName = $assignedProject->project->projectname;
-            $projectNames[] = $projectName;
-            $projectIds[] = $projectId;
-        }
-        $projects = array_combine($projectIds, $projectNames);
-        return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
-
-        }
-
-
-        
     }
     public function enterDateInProjectTempSave(Request $request)
     {
@@ -220,10 +206,8 @@ class TimesheetController extends Controller
         $projectIds = $request->input('selected_project_id');
         $selectedDate = $request->input('selected_date');
         $selectIds = $request->input('selected_id');
-        // dd($selectIds);
         $employeeId = Auth::user()->employee_Id;
 
-        // Loop through each entry
         foreach ($projectIds as $index => $projectId) {
             $date = Carbon::createFromFormat('Y-m-d', $selectedDate)->toDateString();
             $day = Carbon::createFromFormat('Y-m-d', $selectedDate)->format('l');
@@ -280,7 +264,6 @@ class TimesheetController extends Controller
         $projectIds = $request->input('selected_project_id');
         $selectedDate = $request->input('selected_date');
 
-
         foreach ($projectIds as $index => $projectId) {
             $date = Carbon::createFromFormat('Y-m-d', $selectedDate)->toDateString();
             $day = Carbon::createFromFormat('Y-m-d', $selectedDate)->format('l');
@@ -320,7 +303,6 @@ class TimesheetController extends Controller
 
     public function showTimeEntriesByDateAndDay($date, $day)
     {
-        // Fetch time entries for a specific date and day
         $timeEntries = TimeEntry::where('date', $date)
             ->where('day', $day)
             ->get();
@@ -335,8 +317,7 @@ class TimesheetController extends Controller
         $userLoginDetails = Auth::user()->employee_Id;
         $submitedProjects = TimeEntry::where('employee_Id', $userLoginDetails)
             ->with('project')
-            ->get();
-        // dd($submitedProjects);
+            ->paginate(10);
 
         return view('users.submited_timesheet', ['submitedProjects' => $submitedProjects]);
     }

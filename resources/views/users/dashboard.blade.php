@@ -2,7 +2,7 @@
 @section('title', 'Users Profile')
 
 @section('content')
-<div class="admin_main">
-   
-</div>
+    <div class="admin_main">
+
+    </div>
 @endsection

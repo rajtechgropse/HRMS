@@ -9,13 +9,7 @@ class add_on extends Model
 {
     use HasFactory;
     protected $fillable = [
-       'project_id', 'Name','Description','Price'
+        'project_id', 'Name', 'Description', 'Price'
     ];
-    protected $table='add_on';
-
-
-
-
-
-
+    protected $table = 'add_on';
 }

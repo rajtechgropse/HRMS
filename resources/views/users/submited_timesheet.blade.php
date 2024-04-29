@@ -75,7 +75,6 @@
                                             <td>----</td>
 
 
-                                            <!-- Other columns -->
                                         </tr>
                                     @endforeach
                                 </tbody>

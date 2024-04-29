@@ -14,18 +14,19 @@ use App\Http\Controllers\Auth\GoogleController;
 Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
-    
-    Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-    
 
+    Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
+    Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
     Route::any('/dashboard', 'App\Http\Controllers\HomeController@dashboard')->name('dashboard');
     Route::any('/premisons', 'App\Http\Controllers\HomeController@premisons')->name('premisons');
     Route::get('/premisons', 'App\Http\Controllers\HomeController@premisonsDetails')->name('premisonsDetails');
+    Route::get('/timesheet', 'App\Http\Controllers\EmployeeWorkedHours@AllProjectedFetch')->name('AllProjectedFetch');
     Route::any('/addPremissionPage', 'App\Http\Controllers\HomeController@PremisonPageValidate')->name('PremisonPageValidate');
     Route::any('/project', 'App\Http\Controllers\HomeController@manage_project')->name('manage_project');
     Route::any('/projectDetails/{id}', 'App\Http\Controllers\HomeController@projectDetails')->name('projectDetails');
     Route::any('/projects/{id}/edit', 'App\Http\Controllers\HomeController@projectEdit')->name('project.edit');
+    Route::any('/projects/{id}/project_view_with_hours', 'App\Http\Controllers\EmployeeWorkedHours@projectHours')->name('project.hours');
+    Route::any('/projects/{id}/employee_Hours/', 'App\Http\Controllers\EmployeeWorkedHours@employeHours')->name('employee.hours');
     Route::delete('/project/{id}', 'App\Http\Controllers\HomeController@deleteProject')->name('deleteProject');
     Route::any('/projectsUploadFile/{id}', 'App\Http\Controllers\HomeController@projectsUploadFile')->name('projectsUploadFile');
     Route::any('/projectUploadsStore', 'App\Http\Controllers\HomeController@projectUploadsStore')->name('projectUploadsStore');
@@ -91,6 +92,10 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
     Route::any('employeeExportCSV', 'App\Http\Controllers\EmployeeController@employeeExportCSV')->name('employeeExportCSV');
     Route::any('employeeimportCSV', 'App\Http\Controllers\EmployeeController@employeeimportCSV')->name('employeeimportCSV');
     Route::any('/logout', [HomeController::class, 'logout'])->name('logout');
+
+
+
+
     #users Route
 
     Route::get('/user/dashboard', [UsersController::class, 'dashboard'])->name('user.dashboard');
@@ -101,27 +106,11 @@ Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallb
     Route::any('/user/user.enterDateInProjectUpdate', [TimesheetController::class, 'enterTimeInProjectUpdate'])->name('user.enterTimeInProjectUpdate');
     Route::any('/user/user.enterDateInProjectTempSave', [TimesheetController::class, 'enterDateInProjectTempSave'])->name('user.enterDateInProjectTempSave');
     Route::any('/user/user.submitedTimesheet', [TimesheetController::class, 'submitedTimesheet'])->name('user.submitedTimesheet');
-    Route::get('/check-data-exists', [TimesheetController::class,'checkDataExists'])->name('check.data.exists');
-
-
-    // enterDateInProjectUpdate
-    
+    Route::get('/check-data-exists', [TimesheetController::class, 'checkDataExists'])->name('check.data.exists');
     Route::any('/showTimeEntriesByDateAndDay', [TimesheetController::class, 'showTimeEntriesByDateAndDay']);
-    // Route::get('/fetch-time-entries', [TimesheetController::class, 'fetchTimeEntries'])->name('fetch.time.entries');
-
-
-    
-
-
-
 });
-
-
-
-
 
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('loginpage');
 Route::post('/login', [HomeController::class, 'adminLogin'])->name('admin.login');
 
 Route::post('/userlogin', [UsersController::class, 'usersLogin'])->name('user.login');
-

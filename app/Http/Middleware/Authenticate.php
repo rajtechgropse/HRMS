@@ -22,12 +22,11 @@ class Authenticate
 
         if (!Auth::check()) {
 
-            return redirect('login'); 
+            return redirect('login');
         }
         $user = (Auth::user());
-        // dd($user);
-        // dd($user->type);
-       
+
+
         return $next($request);
     }
 }

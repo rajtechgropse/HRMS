@@ -28,11 +28,12 @@ class AddworkesEmployee extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'employee_Id'); 
+        return $this->belongsTo(User::class, 'employee_Id');
     }
-//     public function user()
-// {
-//     return $this->belongsTo(User::class, 'userId');
-// }
+    public function addworkesEmployees()
+    {
+        return $this->hasMany(AddworkesEmployee::class, 'project_id', 'project_id');
+    }
 
+   
 }

@@ -40,57 +40,57 @@ class HomeController  extends Controller
    {
       return view('auth.login');
    }
-   
+
 
    public function adminLogin(Request $request)
-  {
-   $email = $request->input('email');
-    $password = $request->input('password');
-    $users = User::where('email', $email)->first();
+   {
+      $email = $request->input('email');
+      $password = $request->input('password');
+      $users = User::where('email', $email)->first();
 
-    if (Auth::attempt(['email' => $email, 'password' => $password])) {
-        $userType = Auth::user()->role_id;
-        $userDepartment = Auth::user()->userDepartment;
-        $roles = Role::where('name', $userType)->get();
-        $descriptions = $roles->pluck('description')->toArray();
-        $allowedDescriptions = [];
-        $modules = Module::get()->toArray();
-        $requiredPermission = $descriptions;
-        $permissionGetCondition = ['name' => $userType];
-        $rolePermissions = Role::where($permissionGetCondition)->whereIn('description', $requiredPermission)->get()->toArray();
-        $permissionArray = [];
-        $descriptions = array_column($rolePermissions, 'description');
-        foreach ($modules as &$module) {
-           $modulePermissions = [];
-           $hasViewPermission = false;
+      if (Auth::attempt(['email' => $email, 'password' => $password])) {
+         $userType = Auth::user()->role_id;
+         $userDepartment = Auth::user()->userDepartment;
+         $roles = Role::where('name', $userType)->get();
+         $descriptions = $roles->pluck('description')->toArray();
+         $allowedDescriptions = [];
+         $modules = Module::get()->toArray();
+         $requiredPermission = $descriptions;
+         $permissionGetCondition = ['name' => $userType];
+         $rolePermissions = Role::where($permissionGetCondition)->whereIn('description', $requiredPermission)->get()->toArray();
+         $permissionArray = [];
+         $descriptions = array_column($rolePermissions, 'description');
+         foreach ($modules as &$module) {
+            $modulePermissions = [];
+            $hasViewPermission = false;
 
-           foreach ($rolePermissions as $permission) {
-              if ('/' . $permission['role'] === $module['url']) {
-                 $modulePermissions[$permission['description']] = 1;
+            foreach ($rolePermissions as $permission) {
+               if ('/' . $permission['role'] === $module['url']) {
+                  $modulePermissions[$permission['description']] = 1;
 
-                 if (strpos($permission['description'], '.view') !== false) {
-                    $hasViewPermission = true;
-                    $modulePermissions['rolePermission'] = 1;
-                 }
-              }
-           }
-           if (!$hasViewPermission && isset($modulePermissions[$module['url'] . '.view'])) {
-              unset($modulePermissions[$module['url'] . '.view']);
-           }
-           $module = array_merge($module, $modulePermissions);
-        }
-        unset($module);
-        Session::put('user_modules_' . auth()->id(), $modules);
+                  if (strpos($permission['description'], '.view') !== false) {
+                     $hasViewPermission = true;
+                     $modulePermissions['rolePermission'] = 1;
+                  }
+               }
+            }
+            if (!$hasViewPermission && isset($modulePermissions[$module['url'] . '.view'])) {
+               unset($modulePermissions[$module['url'] . '.view']);
+            }
+            $module = array_merge($module, $modulePermissions);
+         }
+         unset($module);
+         Session::put('user_modules_' . auth()->id(), $modules);
 
-        if ($userDepartment === 'Admin') {
+         if ($userDepartment === 'Admin') {
             return redirect('/dashboard');
-        } elseif ($userDepartment === 'Delivery') {
+         } elseif ($userDepartment === 'Delivery') {
             return redirect('/user/dashboard');
-        }
-    }
+         }
+      }
 
-    return redirect()->route('loginpage')->with('error', 'Invalid email or password');
-  }
+      return redirect()->route('loginpage')->with('error', 'Invalid email or password');
+   }
    private function hasPermission($user, $permission)
    {
       $userPermissions = $user->permissions()->pluck('name')->toArray();
@@ -106,6 +106,7 @@ class HomeController  extends Controller
    public function dashboard()
    {
       $modules = Session::get('user_modules_' . auth()->id());
+
       return view('dashboard', ['modules' => $modules]);
    }
    public function add_projects()
@@ -488,7 +489,6 @@ class HomeController  extends Controller
       $projectTotalAmount = $submitinvoice['Total'];
       $TotalAmountInWord = $this->numberToWord($projectTotalAmount);
 
-      // Merge the total amount in words as an element in the array
       $submitinvoice['TotalAmountInWord'] = $TotalAmountInWord;
 
       $submitInvoicesMergedArray = array_merge($submitinvoice, $projectArray);
@@ -503,10 +503,7 @@ class HomeController  extends Controller
 
       return $pdf->stream('invoice.pdf');
    }
-   // {
-   //    $word = $this->numberToWord(120);
-   //    dd($word);
-   // }
+
    public function numberToWord($num = '')
    {
       $num    = (string) ((int) $num);
@@ -590,13 +587,10 @@ class HomeController  extends Controller
 
    public function updateStatus(Request $request, submit_invoices $invoice)
    {
-      // Get the new status from the request
       $newStatus = $request->input('status');
 
-      // Update the status of the invoice
       $invoice->update(['status' => $newStatus]);
 
-      // Redirect back to the previous page
       return redirect()->back();
    }
 
@@ -700,7 +694,6 @@ class HomeController  extends Controller
    {
       $modules = Session::get('user_modules_' . auth()->id());
       $mileStoneDetails = mileStone::find($id);
-      // dd($mileStoneDetails);
       return view('mileStoneEdit', ['mileStoneDetails' => $mileStoneDetails, 'modules' => $modules]);
    }
    public function mileStoneEditStore(Request $request)
@@ -805,7 +798,6 @@ class HomeController  extends Controller
 
    public function addUsersStore(Request $request)
    {
-      // dd($request->all());
       $validator = Validator::make($request->all(), [
          'name' => 'required|string|max:255',
          'email' => 'required|email|unique:users,email',
@@ -905,10 +897,9 @@ class HomeController  extends Controller
          }
          $processedData[$name]['description'][] = $item['description'];
       }
-      // ['modules' => $modules, 'processedData' => $processedData]
 
-      return view('add_Users', ['modules' => $modules, 'processedData' => $processedData]);
-
+      // return view('add_Users', ['modules' => $modules, 'processedData' => $processedData]);
+      return redirect('/user')->with('status','User Sucessfully Update');
    }
 
    public function mannageUser()
@@ -925,12 +916,12 @@ class HomeController  extends Controller
       // $allUsersProjects = AddProjects::all()->toArray();
       // $allUsers = User::all()->toArray();
 
-     
+
 
 
       $allUsersWithProjects = AddworkesEmployee::with(['project', 'user'])->get()->toArray();
-dd($allUsersWithProjects);
-     
+      dd($allUsersWithProjects);
+
       $newArray = [];
       foreach ($allUsersWithProjects as $item) {
          $employee_Id = $item['employee_Id'];
@@ -1047,38 +1038,31 @@ dd($allUsersWithProjects);
    }
    public function editUsers($userId)
    {
-       $user = User::findOrFail($userId);
+      $user = User::findOrFail($userId);
       $modules = Session::get('user_modules_' . auth()->id());
 
-       $role = Role::all()->toArray();
-       $processedData = [];
-   
-       foreach ($role as $item) {
-           $name = $item['name'];
-   
-           if (!isset($processedData[$name]['role'])) {
-               $processedData[$name]['role'] = [];
-           }
-           $processedData[$name]['role'][] = $item['role'];
-   
-           if (!isset($processedData[$name]['description'])) {
-               $processedData[$name]['description'] = [];
-           }
-           $processedData[$name]['description'][] = $item['description'];
-       }
-   
-       // Define options for each department
-      //  $designationOptions = [
-      //      'Delivery' => ["QA", "Software Engineer", "Senior Software Engineer", "Project Manager"],
-      //      'Marketing' => ["Content Writer", "SEO Executive"],
-      //      'Admin' => ["Account Executive"],
-      //      'HR' => ["HR"],
-      //      'Business' => ["Business Development Executive"]
-      //  ];
-   
-       return view('editUser', ['user' => $user, 'processedData' => $processedData,'modules'=>$modules]);
+      $role = Role::all()->toArray();
+      $processedData = [];
+
+      foreach ($role as $item) {
+         $name = $item['name'];
+
+         if (!isset($processedData[$name]['role'])) {
+            $processedData[$name]['role'] = [];
+         }
+         $processedData[$name]['role'][] = $item['role'];
+
+         if (!isset($processedData[$name]['description'])) {
+            $processedData[$name]['description'] = [];
+         }
+         $processedData[$name]['description'][] = $item['description'];
+      }
+
+      return view('editUser', ['user' => $user, 'processedData' => $processedData, 'modules' => $modules]);
+      // return redirect('/user')->with('status', 'User successfully updated.');
+
    }
-   
+
 
    public function projectList()
    {
