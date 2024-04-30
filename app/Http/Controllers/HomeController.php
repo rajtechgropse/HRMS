@@ -84,7 +84,7 @@ class HomeController  extends Controller
 
          if ($userDepartment === 'Admin') {
             return redirect('/dashboard');
-         } elseif ($userDepartment === 'Delivery') {
+         } elseif ($userDepartment === 'Delivery' && $userDepartment === 'Marketing' && $userDepartment === 'Business' ) {
             return redirect('/user/dashboard');
          }
       }

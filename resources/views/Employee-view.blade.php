@@ -2,15 +2,18 @@
 @section('title', 'All Employees')
 @section('content')
     <div class="container-fluid">
-        @if (Session::has('success'))
-            <div class="alert alert-success mt-3">
-                {{ Session::get('success') }}
-            </div>
-        @endif
+
+       
+
         <div class="row mt-4 mb-3">
             <div class="col-md-6">
                 <h3>Employees</h3>
             </div>
+            @if (Session::has('success'))
+            <div class="alert alert-success mt-3" role="alert">
+                {{ Session::get('success') }}
+            </div>
+        @endif
             <div class="col-md-6 text-end">
                 <form action="{{ route('employeeSearch') }}" method="GET" class="d-inline">
                     @csrf
@@ -24,25 +27,25 @@
                 </form>
             </div>
         </div>
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">Employee Actions</h5>
-                            <div>
+                            <div class="d-flex">
                                 @if (isset($modules[3]['employeeView.export']) && $modules[3]['employeeView.export'] == 1)
-                                    <a href="{{ route('employeeExportCSV') }}" class="btn btn-light">Export CSV</a>
+                                    <a href="{{ route('employeeExportCSV') }}" class="btn btn-light mr-2">Export CSV</a>
                                 @endif
                                 @if (isset($modules[3]['employeeView.import']) && $modules[3]['employeeView.import'] == 1)
-                                    <button type="button" class="btn btn-light" data-toggle="modal"
+                                    <button type="button" class="btn btn-light mr-2" data-toggle="modal"
                                         data-target="#importCSVModal">Import CSV</button>
                                 @endif
                                 @if (isset($modules[3]['employeeView.create']) && $modules[3]['employeeView.create'] == 1)
-                                    <a href="{{ route('employeeManagement') }}" class="btn btn-light">Add Employee</a>
+                                    <a href="{{ route('employeeManagement') }}" class="btn btn-light mr-2">Add Employee</a>
                                 @endif
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete
-                                    Selected</button>
+                                <button class="btn btn-danger" onclick="confirmDelete()">Delete Selected</button>
                             </div>
                         </div>
                     </div>
@@ -51,7 +54,7 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th><input type="checkbox" id="selectAllCheckbox"></th>
                                         <th>S.No.</th>
                                         <th>Employee ID</th>
                                         <th>Name</th>
@@ -66,7 +69,7 @@
                                 <tbody>
                                     @foreach ($employeeData as $data)
                                         <tr>
-                                            <td><input type="checkbox" name="employee_ids[]" class="checkbox_id"
+                                            <td><input type="checkbox" class="checkbox_id"
                                                     value="{{ $data['id'] }}"></td>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $data['empId'] }}</td>
@@ -133,14 +136,23 @@
                         selectedEmployeeIds.push(checkbox.value);
                     }
                 });
-                document.getElementById('selectedEmployeeIds').value = selectedEmployeeIds.join(',');
-                document.getElementById('deleteForm').submit();
+                if (selectedEmployeeIds.length > 0) {
+                    document.getElementById('selectedEmployeeIds').value = selectedEmployeeIds.join(',');
+                    document.getElementById('deleteForm').submit();
+                } else {
+                    alert('Please select at least one employee to delete.');
+                }
             }
         }
+
+        // Select all checkboxes
+        document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+            var checkboxes = document.querySelectorAll('.checkbox_id');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = document.getElementById('selectAllCheckbox').checked;
+            });
+        });
+
     </script>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 @endsection

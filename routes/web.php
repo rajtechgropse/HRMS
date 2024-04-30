@@ -82,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/addEmployee', 'App\Http\Controllers\EmployeeController@employeeManagement')->name('employeeManagement');
     Route::any('/employeeManagementStore', 'App\Http\Controllers\EmployeeController@employeeStore')->name('employeeStore');
     Route::any('/employeeView', 'App\Http\Controllers\EmployeeController@employeeView')->name('employeeView');
-    Route::delete('/employees/delete', 'App\Http\Controllers\EmployeeController@deleteSelected')->name('employee.deleteSelected');
+    Route::any('/employees/delete', 'App\Http\Controllers\EmployeeController@deleteSelected')->name('employee.deleteSelected');
     Route::any('employeeManagementUpdate/{id}', 'App\Http\Controllers\EmployeeController@employeeupdate')->name('employeeupdate');
     Route::any('/employeeManagementUpdateStore', 'App\Http\Controllers\EmployeeController@employeeUpdateStore')->name('employeeUpdateStore');
     Route::get('employeeManagementSearch', 'App\Http\Controllers\EmployeeController@employeeSearch')->name('employeeSearch');

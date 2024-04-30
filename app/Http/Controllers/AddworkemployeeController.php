@@ -37,7 +37,7 @@ class AddworkemployeeController extends Controller
     public function fetchUsersByDesignation($designation)
     {
         $users = User::where('designation', $designation)->get();
-        dd($users);
+        // dd($users);
         return response()->json($users);
     }
 
@@ -96,6 +96,7 @@ class AddworkemployeeController extends Controller
     {
         $modules = Session::get('user_modules_' . auth()->id());
         $employee = AddworkesEmployee::findOrFail($id);
+        // dd($employee);
         return view('editEmployee', ['employee' => $employee], ['modules' => $modules]);
     }
 
