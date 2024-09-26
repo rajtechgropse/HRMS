@@ -15,8 +15,9 @@ class mileStone extends Model
         'targetComplectionDate',
         'StartDate',
         'hours',
-        'description'
+        'description',
+        'status'
     ];
-    protected $table = 'mileStone';
+    protected $table = 'milestone';
     protected $guarded = [];
 }

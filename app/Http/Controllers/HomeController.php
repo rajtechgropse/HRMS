@@ -28,8 +28,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Laravel\Socialite\Facades\Socialite;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\InvoiceEmail;
 use Kwn\NumberToWords\NumberTransformer\NumberTransformer as NumberToWordsTransformer;
+use App\Mail\ProjectAdded;
+use App\Models\employees;
+use App\Models\Country;
+
 
 
 
@@ -82,10 +87,14 @@ class HomeController  extends Controller
          unset($module);
          Session::put('user_modules_' . auth()->id(), $modules);
 
-         if ($userDepartment === 'Admin') {
+
+
+
+         if ($userDepartment === 'Admin' || $userDepartment === 'Delivery Head') {
+
             return redirect('/dashboard');
-         } elseif ($userDepartment === 'Delivery' && $userDepartment === 'Marketing' && $userDepartment === 'Business' ) {
-            return redirect('/user/dashboard');
+         } else {
+            return redirect()->route('loginpage')->with('error', 'You are Not Authroized');
          }
       }
 
@@ -112,9 +121,40 @@ class HomeController  extends Controller
    public function add_projects()
    {
       $modules = Session::get('user_modules_' . auth()->id());
+      $userDesignation = 'Project Manager';
+      $projectManagers  = employees::Where('designation', $userDesignation)->whereIn('employeestatus',[0])->get();
 
-      return view('add-project',  ['modules' => $modules]);
+      // dd($projectManagers);
+
+      return view('add-project',  ['modules' => $modules, 'projectManagers' => $projectManagers]);
    }
+   
+   public function checkAllocationProjectManager(Request $request)
+   {
+      $request->validate([
+         'employee_id' => 'required|exists:employees,id',
+         'allocation_percentage' => 'required|numeric|between:1,100',
+      ]);
+
+      $employeeId = $request->input('employee_id');
+      $allocationPercentage = $request->input('allocation_percentage');
+
+      $currentAllocation = AddworkesEmployee::where('employee_id', $employeeId)->sum('allocationpercentage');
+
+      if ($currentAllocation + $allocationPercentage > 100) {
+         return response()->json([
+            'error' => true,
+            'message' => 'Total allocation percentage for this employee exceeds 100%.',
+         ]);
+      }
+
+      return response()->json([
+         'error' => false,
+         'message' => 'Allocation percentage is within limits.',
+      ]);
+   }
+
+
    public function insertProject(Request $request)
    {
       $loginId = Auth::user()->id;
@@ -126,6 +166,8 @@ class HomeController  extends Controller
          'currency' => 'required',
          'projectbudget' => 'required|numeric',
          'projecttype' => 'required|array',
+         'pmEmployeeName' => 'required|exists:employees,id',
+         'pmallocation' => 'required|numeric|between:1,100',
          'csm' => 'required|string',
          'tags' => 'required|string',
          'sc' => 'required|string',
@@ -142,9 +184,13 @@ class HomeController  extends Controller
          'projectcompany.required' => 'The project company field is required.',
          'projectname.required' => 'The project name field is required.',
          'currency.required' => 'The Currency name field is required.',
-
          'projectbudget.required' => 'The project budget field is required.',
          'projecttype.required' => 'The project type field is required.',
+         'pmEmployeeName.required' => 'The project manager field is required.',
+         'pmEmployeeName.exists' => 'The selected project manager is invalid.',
+         'pmallocation.required' => 'The allocation percentage field is required.',
+         'pmallocation.numeric' => 'The allocation percentage must be a number.',
+         'pmallocation.between' => 'The allocation percentage must be between 1 and 100.',
          'csm.required' => 'The CSM field is required.',
          'tags.required' => 'The tags field is required.',
          'sc.required' => 'The Service Type field is required.',
@@ -174,9 +220,10 @@ class HomeController  extends Controller
          'projectcompany' => $request->input('projectcompany'),
          'projectname' => $request->input('projectname'),
          'currency' => $request->input('currency'),
-
          'projectbudget' => $request->input('projectbudget'),
          'projecttype' => json_encode($request->input('projecttype')),
+         'pmemployeeId' => $request->input('pmEmployeeName'),
+         'pmallocation' => $request->input('pmallocation'),
          'csm' => $request->input('csm'),
          'tags' => $request->input('tags'),
          'sc' => $request->input('sc'),
@@ -194,16 +241,74 @@ class HomeController  extends Controller
       $existingProject = AddProjects::find($projectId);
       if ($existingProject) {
          $existingProject->fill($projectData)->save();
-         return redirect()->back()->with('status', 'Project Updated Successfully');
+         $projectId = $existingProject->id;
+         $message = 'Project Updated Successfully';
       } else {
          $project = AddProjects::create($projectData);
-
          if ($project) {
-            return redirect('/project')->with('status', 'Project Added Successfully');
+            $projectId = $project->id;
+            $message = 'Project Added Successfully';
+
+            $pmemployeeId = $request->input('pmEmployeeName');
+            $projectManager = employees::where('id', $pmemployeeId)->first();
+            $admin = User::where('role_id', 'admin')->first();
+
+            if ($projectManager && $admin) {
+               Mail::to([$projectManager->officialemail, $admin->email])->send(new ProjectAdded($project, $projectManager, $admin));
+            } elseif ($projectManager) {
+               Mail::to($projectManager->officialemail)->send(new ProjectAdded($project, $projectManager, null));
+            } elseif ($admin) {
+               Mail::to($admin->email)->send(new ProjectAdded($project, null, $admin));
+            }
          } else {
             return redirect()->back()->with('status', 'Failed to Create New Project');
          }
       }
+
+      $additionalData = [
+         'project_id' => $projectId,
+         'userDepartment' => '0',
+         'userDesignation' => 'Project Manager',
+         'employee_Id' => $request->input('pmEmployeeName'),
+         'allocationpercentage' => $request->input('pmallocation'),
+         'status' => '0',
+         'startdate' => $request->input('projectstartdate'),
+         'enddate' => $request->input('projectenddate'),
+      ];
+      addworkesEmployee::create($additionalData);
+
+      return redirect('/project')->with('status', $message);
+   }
+
+
+
+   public function projectEdit($id)
+   {
+      $modules = Session::get('user_modules_' . auth()->id());
+      $project = AddProjects::find($id);
+      $userDesignation = 'Project Manager';
+      $countries = Country::all();
+
+
+      // $projectManagers  = employees::Where('designation', $userDesignation)->get();
+      $projectManagers  = employees::Where('designation', $userDesignation)->whereIn('employeestatus',[0])->get();
+
+      $employeeIds = $project->pluck('pmemployeeId');
+      $employeeDetails = employees::whereIn('id', explode(',', $employeeIds))->get();
+      $employeeName = $employeeDetails->pluck('name');
+
+      if (!$project) {
+         abort(404);
+      }
+      return view('edit_manage_project', [
+
+         'project' => $project,
+         'modules' => $modules,
+         'projectManagers' => $projectManagers,
+         'employeeName' => $employeeName,
+         'countries' => $countries,
+
+      ]);
    }
    public function projectUpdate(Request $request)
    {
@@ -277,25 +382,92 @@ class HomeController  extends Controller
          'projectstartdate' => $request->input('projectstartdate'),
          'projectenddate' => $request->input('projectenddate'),
          'status' => $request->input('status'),
+         'pmemployeeId' => $request->input('pmEmployeeName'),
+         'pmallocation' => $request->input('pmallocation'),
       ];
-
       $existingProject = AddProjects::find($projectId);
       if ($existingProject) {
-         $existingProject->fill($projectData)->save();
-         return redirect('/project')->with('status', 'Project Updated Successfully');
+       
+         $existingProject->update($projectData);
+         $message = 'Project Updated Successfully';
+
+         $additionalData = [
+            'userDepartment' => '0',
+            'userDesignation' => 'Project Manager',
+            'employee_Id' => $request->input('pmEmployeeName'),
+            'allocationpercentage' => $request->input('pmallocation'),
+            'startdate' => $request->input('projectstartdate'),
+            'enddate' => $request->input('projectenddate'),
+            'status' => 0,
+         ];
+
+         $allocationDataUpdate = addworkesEmployee::where('project_id', $projectId)
+            ->where('userDesignation', 'Project Manager')
+            ->first();
+
+         if ($allocationDataUpdate) {
+            $allocationDataUpdate->update($additionalData);
+         } else {
+            addworkesEmployee::create(array_merge($additionalData, ['project_id' => $projectId]));
+         }
+
+         return redirect('/project')->with('status', $message);
       } else {
-         return redirect()->back()->with('status', 'Failed to Update Project');
+         return redirect()->back()->with('status', 'Project not found.');
+      }
+   }
+
+   
+   public function manage_project()
+   {
+      if (Auth::user()->status == 0) {
+         $projects = AddProjects::paginate(15);
+         $modules = Session::get('user_modules_' . auth()->id());
+
+         $projectManagersIds = $projects->pluck('pmemployeeId')->unique();
+
+         $projectManagers = employees::whereIn('id', $projectManagersIds)->get()->keyBy('id');
+
+         return view("manage-project", [
+            'users' => $projects,
+            'modules' => $modules,
+            'projectManagers' => $projectManagers
+         ]);
+      } elseif (Auth::user()->status == 1) {
+         if (Auth::user()->userDesignation == 'Project Manager') {
+            $userAssignedProject = Auth::user()->employee_Id;
+            $assignedProjects = AddworkesEmployee::where('employee_Id', $userAssignedProject)
+               ->pluck('project_id')
+               ->toArray();
+
+            $projects = AddProjects::whereIn('id', $assignedProjects)->paginate(15);
+            $projectManagersIds = $projects->pluck('pmemployeeId')->unique();
+
+            $projectManagers = employees::whereIn('id', $projectManagersIds)->get()->keyBy('id');
+
+            return view("users.projectManageProject", [
+               'users' => $projects,
+               'projectManagers' => $projectManagers
+
+            ]);
+         } else {
+            return redirect()->back()->with('error', 'You are Not Authorized');
+         }
       }
    }
 
 
-
-
-   public function manage_project()
+   public function show($id)
    {
-      $projects = AddProjects::paginate(10);
-      $modules = Session::get('user_modules_' . auth()->id());
-      return view("manage-project", ['users' => $projects], ['modules' => $modules]);
+      $project = AddProjects::find($id);
+      if (Auth::user()->status == 0) {
+         $modules = Session::get('user_modules_' . auth()->id());
+         $invoices = submit_invoices::where('project_id', $id)->paginate(10);
+         return view('project-invoices', ['projectData' => $project, 'invoicesData' => $invoices, 'modules' => $modules]);
+      } elseif (Auth::user()->status == 1) {
+         $invoices = submit_invoices::where('project_id', $id)->paginate(10);
+         return view('users.projectInvoicesProjectManager', ['projectData' => $project, 'invoicesData' => $invoices]);
+      }
    }
    public function projectDetails($id)
    {
@@ -304,19 +476,6 @@ class HomeController  extends Controller
       return view("projectDeatils", ['projects' => $projects], ['modules' => $modules]);
    }
 
-   public function projectEdit($id)
-   {
-      $modules = Session::get('user_modules_' . auth()->id());
-      $project = AddProjects::find($id);
-      if (!$project) {
-         abort(404);
-      }
-      return view('edit_manage_project', [
-
-         'project' => $project,
-         'modules' => $modules,
-      ]);
-   }
    public function projectsUploadFile($id)
    {
       $projects = AddProjects::find($id);
@@ -328,51 +487,107 @@ class HomeController  extends Controller
       $modules = Session::get('user_modules_' . auth()->id());
       return view('fileUpload', ['modules' => $modules, 'projectId' => $projectId, 'fileUploads' => $fileUploads]);
    }
+   // public function projectUploadsStore(Request $request)
+   // {
+
+   //    $validator = Validator::make(
+   //       $request->all(),
+   //       [
+   //          'project_id' => 'required',
+   //          'category' => 'required',
+   //          'contract' => 'required|array',
+   //          'contract.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+   //       ],
+   //       [
+   //          'category.required' => 'The category is required.',
+   //          'contract.required' => 'At least one contract file is required.',
+   //          'contract.*.image' => 'Each contract file must be an image.',
+   //          'contract.*.mimes' => 'Each contract file must be a valid image format (jpeg, png, jpg, gif, svg).',
+   //          'contract.*.max' => 'Each contract file must not exceed 2048 kilobytes (2MB).',
+
+   //       ]
+   //    );
+
+   //    if ($validator->fails()) {
+   //       return redirect()->back()->withErrors($validator)->withInput();
+   //    }
+   //    $projectData = [
+   //       'project_id' => $request->input('project_id'),
+   //       'category' => $request->input('category'),
+   //    ];
+
+   //    if ($request->hasFile('contract')) {
+   //       $images = $request->file('contract');
+   //       $imagePaths = [];
+
+   //       foreach ($images as $key => $image) {
+   //          $profileImage = date('YmdHis') . '_' . $key . '.' . $image->getClientOriginalExtension();
+   //          $image->move(public_path('images'), $profileImage);
+   //          $imagePaths[] = $profileImage;
+   //       }
+
+   //       $projectData['contract'] = json_encode($imagePaths);
+   //    }
+   //    $projectData = projectsuploadsfile::create($projectData);
+
+   //    return redirect()->back()->with('success', 'Project uploads successfully.');
+
+   //    return redirect()->back()->with('error', 'Failed to upload project files.');
+   // }
+
+
    public function projectUploadsStore(Request $request)
    {
-
+      // Validate the request
       $validator = Validator::make(
          $request->all(),
          [
             'project_id' => 'required',
             'category' => 'required',
             'contract' => 'required|array',
-            'contract.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'contract.*' => 'required|file|mimes:pdf,doc,docx,jpeg,png|max:10240',
+
          ],
          [
             'category.required' => 'The category is required.',
             'contract.required' => 'At least one contract file is required.',
-            'contract.*.image' => 'Each contract file must be an image.',
-            'contract.*.mimes' => 'Each contract file must be a valid image format (jpeg, png, jpg, gif, svg).',
-            'contract.*.max' => 'Each contract file must not exceed 2048 kilobytes (2MB).',
-
+            'contract.*.file' => 'Each contract file must be a valid file.',
+            'contract.*.mimes' => 'Each contract file must be a valid format (pdf, doc, docx).',
+            'contract.*.max' => 'Each contract file must not exceed 10240 kilobytes (10MB).',
          ]
       );
 
       if ($validator->fails()) {
          return redirect()->back()->withErrors($validator)->withInput();
       }
+
+      // Prepare project data
       $projectData = [
          'project_id' => $request->input('project_id'),
          'category' => $request->input('category'),
       ];
 
+      // Handle file uploads
       if ($request->hasFile('contract')) {
-         $images = $request->file('contract');
-         $imagePaths = [];
+         $files = $request->file('contract');
+         $filePaths = [];
 
-         foreach ($images as $key => $image) {
-            $profileImage = date('YmdHis') . '_' . $key . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images'), $profileImage);
-            $imagePaths[] = $profileImage;
+         foreach ($files as $key => $file) {
+            $fileName = date('YmdHis') . '_' . $key . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $fileName); // Ensure the directory exists
+            $filePaths[] = $fileName;
          }
 
-         $projectData['contract'] = json_encode($imagePaths);
+         $projectData['contract'] = json_encode($filePaths);
       }
 
-      $projectData = projectsuploadsfile::create($projectData);
+      // Save project data to the database
+      $uploadedFile = projectsuploadsfile::create($projectData);
 
-      return redirect()->back()->with('success', 'Project uploads successfully.');
+      // Check if saving was successful
+      if ($uploadedFile) {
+         return redirect()->back()->with('success', 'Project uploaded successfully.');
+      }
 
       return redirect()->back()->with('error', 'Failed to upload project files.');
    }
@@ -433,27 +648,21 @@ class HomeController  extends Controller
       }
    }
 
-
-   public function show($id)
-   {
-      $project = AddProjects::find($id);
-      $modules = Session::get('user_modules_' . auth()->id());
-      $invoices = submit_invoices::where('project_id', $id)->paginate(10);
-      return view('project-invoices', ['projectData' => $project, 'invoicesData' => $invoices, 'modules' => $modules]);
-   }
-
-
-
    public function addinvoices($id)
    {
       $modules = Session::get('user_modules_' . auth()->id());
       $projectData = AddProjects::find($id);
-      return view('add-invoice', ['projectData' => $projectData], ['modules' => $modules]);
+
+      if (Auth::user()->status == 0) {
+         return view('add-invoice', ['projectData' => $projectData], ['modules' => $modules]);
+      } elseif (Auth::user()->status == 1) {
+         return view('users.addInvoiceUser', ['projectData' => $projectData]);
+      }
    }
    public function submit_invoice(Request $request)
    {
-      $userId = Auth::user()->id;
 
+      $userId = Auth::user()->id;
       $validatedData = $request->validate([
          'date' => 'required|date',
          'due_date' => 'required|date',
@@ -486,12 +695,16 @@ class HomeController  extends Controller
       $projectId = $request->input('project_id');
       $invoice = AddProjects::find($projectId);
       $projectArray = $invoice->toArray();
+
       $projectTotalAmount = $submitinvoice['Total'];
       $TotalAmountInWord = $this->numberToWord($projectTotalAmount);
 
       $submitinvoice['TotalAmountInWord'] = $TotalAmountInWord;
 
       $submitInvoicesMergedArray = array_merge($submitinvoice, $projectArray);
+      $clientEmailAsProject = $submitInvoicesMergedArray['cilentemail'];
+
+      $cilentNameAsProject = $submitInvoicesMergedArray['cilentname'];
 
       $pdf = new Dompdf();
       $pdf->setPaper('A4', 'portrait');
@@ -500,9 +713,74 @@ class HomeController  extends Controller
       $pdf->loadHtml($html);
 
       $pdf->render();
+      $pdfOutput = $pdf->output();
 
+      $clientEmail = $clientEmailAsProject;
+      $clientName = $cilentNameAsProject;
+      Mail::to($clientEmail)->send(new InvoiceEmail($submitInvoicesMergedArray, $pdfOutput));
+
+      return back()->with('status', 'Invoice sent to client successfully!');
+   }
+
+
+   public function invoiceUpdate(Request $request)
+   {
+      $userId = Auth::user()->id;
+      $invoiceId = $request->input('invoiceId');
+      $validatedData = $request->validate([
+         'date' => 'required|date',
+         'due_date' => 'required|date',
+         'Description' => 'required|string',
+         'Quantity' => 'required|numeric',
+         'Price' => 'required|numeric',
+         'Amount' => 'required|numeric',
+         'Total' => 'required|numeric',
+         'Comments' => 'required|string',
+      ]);
+
+      $submitInvoiceData = [
+         'project_id' => $request->input('project_id'),
+         'Bill_Genrate_Date' => $request->input('date'),
+         'DueDate' => $request->input('due_date'),
+         'Description' => $request->input('Description'),
+         'Quantity' => $request->input('Quantity'),
+         'Price' => $request->input('Price'),
+         'Amount' => $request->input('Amount'),
+         'Total' => $request->input('Total'),
+         'Comments' => $request->input('Comments'),
+         'PaymentOption' => $request->input('flexRadioDefault'),
+         'status' => 0,
+         'usersId' => $userId,
+      ];
+
+      if ($invoiceId) {
+         $invoice = submit_invoices::find($invoiceId);
+         if ($invoice) {
+            $invoice->update($submitInvoiceData);
+         } else {
+
+            return response()->json(['error' => 'Invoice not found'], 404);
+         }
+      }
+      $submitInvoiceId = DB::table('submit_invoices')->find($invoiceId);
+      $projectId = $request->input('project_id');
+      $invoice = AddProjects::find($projectId);
+      $projectArray = $invoice->toArray();
+      $projectTotalAmount = $submitInvoiceData['Total'];
+      $TotalAmountInWord = $this->numberToWord($projectTotalAmount);
+
+      $submitInvoiceData['TotalAmountInWord'] = $TotalAmountInWord;
+
+      $submitInvoicesMergedArray = array_merge($submitInvoiceData, $projectArray);
+      $pdf = new Dompdf();
+      $pdf->setPaper('A4', 'portrait');
+      $html = view('invoice', $submitInvoicesMergedArray)->render();
+      $pdf->loadHtml($html);
+      $pdf->render();
       return $pdf->stream('invoice.pdf');
    }
+
+
 
    public function numberToWord($num = '')
    {
@@ -579,10 +857,12 @@ class HomeController  extends Controller
       $modules = Session::get('user_modules_' . auth()->id());
 
       $invoice = submit_invoices::findOrFail($id);
-
       $projectData = $invoice->project;
-
-      return view('invoices_edit', compact('invoice', 'modules', 'projectData'));
+      if (Auth::user()->status == 0) {
+         return view('invoices_edit', compact('invoice', 'modules', 'projectData'));
+      } elseif (Auth::user()->status == 1) {
+         return view('users.invoiceEditUser', compact('invoice', 'projectData'));
+      }
    }
 
    public function updateStatus(Request $request, submit_invoices $invoice)
@@ -611,34 +891,55 @@ class HomeController  extends Controller
    public function addmilestone($id)
    {
       $modules = Session::get('user_modules_' . auth()->id());
-
       $projectData = AddProjects::find($id);
-      if ($projectData) {
-
-         $data = \App\Models\milestone::where('project_id', $projectData->id)->get();
+      if (Auth::user()->status == 0) {
+         if ($projectData) {
+            $data = mileStone::where('project_id', $projectData->id)->get();
+            $projectId = $projectData->id;
+            return view('add_Milestone', [
+               'modules' => $modules,
+               'projectId' => $projectId,
+               'data' => $data,
+            ]);
+         }
+      } elseif (Auth::user()->status == 1) {
+         $data = mileStone::where('project_id', $projectData->id)->get();
          $projectId = $projectData->id;
-         return view('add_Milestone', [
-            'modules' => $modules,
+         return view('users.addMilestoneUser', [
+
             'projectId' => $projectId,
             'data' => $data,
          ]);
-      } else {
       }
    }
-   public function addmilestonenew($id)
+   public function addmilestoneForm($id)
    {
       $modules = Session::get('user_modules_' . auth()->id());
 
       $projectData = AddProjects::find($id);
-      if ($projectData) {
+      if (Auth::user()->status == 0) {
 
-         $data = \App\Models\milestone::where('project_id', $projectData->id)->get();
+         if ($projectData) {
 
-         return view('add_MilestoneView', [
-            'modules' => $modules,
-            'projectData' => $projectData,
-            'data' => $data,
-         ]);
+            $data = mileStone::where('project_id', $projectData->id)->get();
+
+            return view('add_MilestoneView', [
+               'modules' => $modules,
+               'projectData' => $projectData,
+               'data' => $data,
+            ]);
+         }
+      } elseif (Auth::user()->status == 1) {
+         if ($projectData) {
+
+            $data = mileStone::where('project_id', $projectData->id)->get();
+
+            return view('users.addMilestoneViewFormUser', [
+
+               'projectData' => $projectData,
+               'data' => $data,
+            ]);
+         }
       }
    }
    public function validatMileStone(Request $request)
@@ -669,6 +970,8 @@ class HomeController  extends Controller
          'StartDate' => $request->input('StartDate'),
          'hours' => $request->input('time'),
          'description' => $request->input('description'),
+         'status' => 2,
+
       ];
 
       milestone::create($AddMilestoneDetails);
@@ -694,7 +997,12 @@ class HomeController  extends Controller
    {
       $modules = Session::get('user_modules_' . auth()->id());
       $mileStoneDetails = mileStone::find($id);
-      return view('mileStoneEdit', ['mileStoneDetails' => $mileStoneDetails, 'modules' => $modules]);
+      if (Auth::user()->status == 0) {
+
+         return view('mileStoneEdit', ['mileStoneDetails' => $mileStoneDetails, 'modules' => $modules]);
+      } elseif (Auth::user()->status == 1) {
+         return view('users.mileStoneEditUser', ['mileStoneDetails' => $mileStoneDetails]);
+      }
    }
    public function mileStoneEditStore(Request $request)
    {
@@ -732,6 +1040,7 @@ class HomeController  extends Controller
                'StartDate' => $request->input('StartDate'),
                'hours' => $request->input('hours'),
                'description' => $request->input('description'),
+               'status' => 0,
             ]);
 
             return redirect()->route('addmilestone.id', ['id' => $project_id])->with('status', 'Milestone Updated Successfully');
@@ -838,7 +1147,7 @@ class HomeController  extends Controller
       $user = User::create($usersStore);
       if ($user) {
          $status = "User added successfully!";
-         return redirect()->back()->with('status', $status);
+         return redirect('/user')->with('status', 'User Sucessfully Added');
       } else {
          $status = "Failed to add user!";
          return redirect()->back()->with('status', $status);
@@ -847,59 +1156,31 @@ class HomeController  extends Controller
 
    public function addUsersUpdateStore(Request $request, $id)
    {
-      // $rules = [
-      //    'name' => 'required|string|max:255',
-      //    'password' => 'nullable|string|min:6',
-      //    'type' => 'required|in:0,1,2,3,4,5,6',
-      //    'email' => [
-      //       'required',
-      //       'email',
-      //       Rule::unique('users', 'email')->ignore($id),
-      //    ],
-      //    'role_id' => 'required',
-      //    'userstatus' => 'required|in:0,1',
-      // ];
+      // dd($request->all());
+      //    $validatedData = $request->validate([
+      //       'name' => 'required|string',
+      //       'email' => 'required|email|unique:users,email,' . $id,
+      //       'password' => 'nullable|string|min:8', // Password is nullable as it's optional
+      //       'userDepartment' => 'required|string',
+      //       'userDesignation' => 'required|string',
+      //       'status' => 'required|boolean',
+      //   ]);
 
-      // $messages = [
-      //    'name.required' => 'The name field is required.',
-      //    'password.min' => 'The password must be at least 6 characters.',
-      //    'type.required' => 'Please select a user type.',
-      //    'email.required' => 'The email field is required.',
-      //    'email.email' => 'Please enter a valid email address.',
-      //    'email.unique' => 'The email address is already in use.',
-      //    'role_id.required' => 'Please select a role.',
-      //    'userstatus.required' => 'Please select a user status.',
-      // ];
+      $user = User::findOrFail($id);
 
-      // $validator = Validator::make($request->all(), $rules, $messages);
+      $user->name = $request->input('name');
+      $user->email = $request->input('email');
+      $user->userDepartment = $request->input('userDepartment');
+      $user->userDesignation = $request->input('userDesignation');
+      $user->status = $request->input('userstatus');
 
-      // if ($validator->fails()) {
-      //    return redirect()->back()
-      //       ->withErrors($validator)
-      //       ->withInput();
-      // }
-
-      $user  = Auth::user()->status;
-      $modules = Session::get('user_modules_' . auth()->id());
-      $role = Role::all()->toArray();
-      $processedData = [];
-
-      foreach ($role as $item) {
-         $name = $item['name'];
-
-         if (!isset($processedData[$name]['role'])) {
-            $processedData[$name]['role'] = [];
-         }
-         $processedData[$name]['role'][] = $item['role'];
-
-         if (!isset($processedData[$name]['description'])) {
-            $processedData[$name]['description'] = [];
-         }
-         $processedData[$name]['description'][] = $item['description'];
+      if ($request->filled('password')) {
+         $user->password = Hash::make($request->input('password'));
       }
 
-      // return view('add_Users', ['modules' => $modules, 'processedData' => $processedData]);
-      return redirect('/user')->with('status','User Sucessfully Update');
+      $user->save();
+
+      return redirect()->route('user', ['userId' => $id])->with('status', 'User updated successfully');
    }
 
    public function mannageUser()
@@ -909,118 +1190,7 @@ class HomeController  extends Controller
       $allUsers = User::paginate(15);
       return view('mannage_user', ['modules' => $modules], ['allUsers' => $allUsers]);
    }
-   public function userAllocationList()
-   {
-      $modules = Session::get('user_modules_' . auth()->id());
-      // $allUserAddworkesEmployee = AddworkesEmployee::all()->toArray();
-      // $allUsersProjects = AddProjects::all()->toArray();
-      // $allUsers = User::all()->toArray();
 
-
-
-
-      $allUsersWithProjects = AddworkesEmployee::with(['project', 'user'])->get()->toArray();
-      dd($allUsersWithProjects);
-
-      $newArray = [];
-      foreach ($allUsersWithProjects as $item) {
-         $employee_Id = $item['employee_Id'];
-         $startDate = $item['startdate'];
-         $endDate = $item['enddate'];
-         $allocationPercentage = $item['allocationpercentage'];
-         $projectName = $item['project']['projectname'];
-         $userDesignation = $item['user']['userDesignation'];
-
-         $identifier = $employee_Id;
-
-         if (!isset($newArray[$identifier])) {
-            $newArray[$identifier] = [
-               'name' => $item['user']['name'],
-               'userDesignation' => $userDesignation,
-               'allocationpercentage' => [],
-               'dateRange' => [],
-            ];
-         }
-
-         $newArray[$identifier]['allocationpercentage'][] = $allocationPercentage;
-
-         for ($date = $startDate; $date <= $endDate; $date = date('Y-m-d', strtotime($date . ' +1 day'))) {
-            if (!isset($newArray[$identifier]['dateRange'][$date])) {
-               $newArray[$identifier]['dateRange'][$date] = [];
-            }
-
-            $newArray[$identifier]['dateRange'][$date][] = $projectName;
-         }
-      }
-
-      foreach ($newArray as &$user) {
-         $mergedDateRange = [];
-
-         foreach ($user['dateRange'] as $date => $projects) {
-            $endDate = date('Y-m-d', strtotime($date . ' +1 day'));
-
-            while (isset($user['dateRange'][$endDate]) && $user['dateRange'][$endDate] === $projects) {
-               unset($user['dateRange'][$endDate]);
-               $endDate = date('Y-m-d', strtotime($endDate . ' +1 day'));
-            }
-
-            $mergedDateRange[] = [
-               'date' => $date,
-               'projectName' => $projects,
-            ];
-         }
-
-         $user['dateRange'] = $mergedDateRange;
-      }
-
-      $tableBlocks = [];
-
-      foreach ($newArray as $data) {
-         $tableBlock = '<thead><tr role="row">
-        <th class="sorting" tabindex="0" aria-controls="style-2" rowspan="1"
-            colspan="1"
-            aria-label="Last Name: activate to sort column ascending"
-            style="width: 78px;">User Name</th>
-        <th class="sorting" tabindex="0" aria-controls="style-2" rowspan="1"
-            colspan="1"
-            aria-label="Email: activate to sort column ascending"
-            style="width: 139px;">Degistation</th>
-        <th class="sorting" tabindex="0" aria-controls="style-2" rowspan="1"
-            colspan="1"
-            aria-label="Email: activate to sort column ascending"
-            style="width: 139px;">Allotment</th>';
-
-         foreach ($data['dateRange'] as $dateData) {
-            $tableBlock .= '<th>' . $dateData['date'] . '</th>';
-         }
-
-         $tableBlock .= '</tr></thead>';
-         $tableBlock .= '<tbody><tr>';
-         $tableBlock .= '<td>' . $data['name'] . '</td>';
-         $tableBlock .= '<td>' . $data['userType'] . '</td>';
-         $tableBlock .= '<td>' . implode(', ', $data['allocationpercentage']) . '</td>';
-
-         foreach ($data['dateRange'] as $dateData) {
-            $tableBlock .= '<td>' . implode(', ', $dateData['projectName']) . '</td>';
-         }
-
-         $tableBlock .= '</tr></tbody>';
-         $tableBlocks[] = $tableBlock;
-      }
-
-      return view('allUserAllocationLIst', [
-         'modules' => $modules,
-         'data' => $newArray,
-         'tables' => $tableBlocks,
-      ]);
-   }
-
-   public function projectAllocations()
-   {
-      $modules = Session::get('user_modules_' . auth()->id());
-      $allUsersWithProjects = addworkesEmployee::with(['project', 'user'])->paginate(10);
-      return view('allocationUsers', ['modules' => $modules, 'allUsers' => $allUsersWithProjects]);
-   }
 
 
    public function deleteUser($id)
@@ -1038,7 +1208,9 @@ class HomeController  extends Controller
    }
    public function editUsers($userId)
    {
+
       $user = User::findOrFail($userId);
+
       $modules = Session::get('user_modules_' . auth()->id());
 
       $role = Role::all()->toArray();
@@ -1059,8 +1231,6 @@ class HomeController  extends Controller
       }
 
       return view('editUser', ['user' => $user, 'processedData' => $processedData, 'modules' => $modules]);
-      // return redirect('/user')->with('status', 'User successfully updated.');
-
    }
 
 

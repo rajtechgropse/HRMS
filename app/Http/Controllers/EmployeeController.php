@@ -13,6 +13,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\QueryException;
+// use App\Models\AddworkesEmployee;
+use App\Models\addworkesEmployee;
+use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -34,12 +40,14 @@ class EmployeeController extends Controller
                 'pannumber' => 'required',
                 'name' => 'required|string|max:255',
                 'currentaddress' => 'required|max:255',
-                'userDepartment' => 'required|',
+                'userDepartment' => 'required',
                 'permanentaddress' => 'required|string|max:255',
                 'comnpanyexperience' => 'required|numeric',
-                'userDesignation' => 'required|',
+                'userDesignation' => 'required',
                 'city' => 'required|string|max:255',
-                'employeestatus' => 'required|string|in:active,inactive',
+                // 'employeestatus' => 'required|string|in:active,inactive',
+                'employeestatus' => 'required|string|in:0,1',
+
                 'reportingmanager' => 'required|string|max:255',
                 'dob' => 'required|date',
                 'lastworkingday' => 'required|date',
@@ -71,7 +79,7 @@ class EmployeeController extends Controller
                 'city.required' => 'City is required.',
                 'city.max' => 'City must not exceed 255 characters.',
                 'employeestatus.required' => 'Employee status is required.',
-                'employeestatus.in' => 'Employee status must be either active or inactive.',
+                // 'employeestatus.in' => 'Employee status must be either active or inactive.',
                 'reportingmanager.required' => 'Reporting manager is required.',
                 'reportingmanager.max' => 'Reporting manager must not exceed 255 characters.',
                 'dob.required' => 'Date of birth is required.',
@@ -92,12 +100,14 @@ class EmployeeController extends Controller
                 'contactdetails.max' => 'Contact details must not exceed 255 characters.',
                 'aadharnumber.required' => 'Aadhar number is required.',
                 'aadharnumber.max' => 'Aadhar number must not exceed 255 characters.',
+
             ]
         );
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
 
         $empId = $request->input('empId');
         $emergencycontact = $request->input('emergencycontact');
@@ -146,19 +156,41 @@ class EmployeeController extends Controller
             'aadharnumber' => $aadharnumber,
         ]);
 
+
         if ($addEmployee) {
             $status = "Employee added successfully!";
-            return redirect('/employeeView')->back()->with('status', $status);
+            return redirect('/employeeView')->with('status', $status);
         } else {
             $status = "Failed to add Employee!";
             return redirect()->back()->with('status', $status);
         }
     }
+
+    // public function employeeView()
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $employeeData = employees::paginate(15);
+    //     return view('Employee-view', ['modules' => $modules, 'employeeData' => $employeeData]);
+    // }
     public function employeeView()
     {
-        $modules = Session::get('user_modules_' . auth()->id());
-        $employeeData = employees::paginate(10);
-        return view('Employee-view', ['modules' => $modules, 'employeeData' => $employeeData]);
+        if (Auth::user()->status == 0) {
+
+            $modules = Session::get('user_modules_' . auth()->id());
+            $employeeData = employees::paginate(15);
+            return view('Employee-view', ['modules' => $modules, 'employeeData' => $employeeData]);
+        }
+        if (Auth::user()->userDesignation == 'Project Manager') {
+            $employeeDetails = employees::paginate(15);
+
+
+            return view("users.employee_viewPm", [
+                'employeeData' => $employeeDetails
+
+            ]);
+        } else {
+            return redirect()->back()->with('error', 'You are Not Authorized');
+        }
     }
     public function employeeSearch(Request $request)
     {
@@ -173,14 +205,12 @@ class EmployeeController extends Controller
     }
     public function deleteSelected(Request $request)
     {
-        $selectedEmployeeIds = explode(',', $request->input('selected_employee_ids'));
+        $selectedEmployeeIds = explode(',', $request->input('selectedEmployeeIds'));
         employees::whereIn('id', $selectedEmployeeIds)->delete();
         return redirect()->back()->with('success', 'Selected employees have been deleted successfully.');
     }
-    public function SelectedEmployeedel()
-    {
-        dd('delete');
-    }
+
+
     public function employeeFind()
     {
         $modules = Session::get('user_modules_' . auth()->id());
@@ -196,6 +226,59 @@ class EmployeeController extends Controller
             ->paginate(15);
 
         return view('searchView', ['employees' => $employees, 'modules' => $modules]);
+    }
+
+    public function fetchDetails(Request $request)
+    {
+        $status = $request->input('status');
+        if ($status === '') {
+            return response()->json(['data' => []]);
+        }
+        $fetchDetails = employees::where('employeestatus', $status)->get();
+
+        $data = $fetchDetails->map(function ($employee) {
+            return [
+                'id' => $employee->id,
+                'empId' => $employee->empId,
+                'name' => $employee->name,
+                'department' => $employee->getDepartmentName(),
+                'designation' => $employee->designation,
+                'reportingmanager' => $employee->reportingmanager,
+                'officialemail' => $employee->officialemail,
+                'personalemail' => $employee->personalemail
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+
+    public function fetchEmployeeDetailsAjax(Request $request)
+    {
+        $searchQuery = $request->input('search');
+
+        $employees = employees::where('name', 'like', '%' . $searchQuery . '%')
+            ->orWhere('empId', 'like', '%' . $searchQuery . '%')
+            ->orWhere('department', 'like', '%' . $searchQuery . '%')
+            ->orWhere('designation', 'like', '%' . $searchQuery . '%')
+            ->orWhere('officialemail', 'like', '%' . $searchQuery . '%')
+            ->orWhere('personalemail', 'like', '%' . $searchQuery . '%')
+            ->get();
+
+        $employees = $employees->map(function ($employee) {
+            return [
+                'id' => $employee->id,
+                'empId' => $employee->empId,
+                'name' => $employee->name,
+                'department' => $employee->getDepartmentName(),
+                'designation' => $employee->designation,
+                'officialemail' => $employee->officialemail,
+                'personalemail' => $employee->personalemail,
+                'reportingmanager' => $employee->reportingmanager,
+            ];
+        });
+
+        return response()->json(['data' => $employees]);
     }
 
     public function ViewDetailsEmployee($id)
@@ -214,6 +297,7 @@ class EmployeeController extends Controller
     }
     public function employeeUpdateStore(Request $request)
     {
+
         $EmployeeId = $request->input('id');
         $validator = Validator::make(
             $request->all(),
@@ -223,12 +307,14 @@ class EmployeeController extends Controller
                 'pannumber' => 'required',
                 'name' => 'required|string|max:255',
                 'currentaddress' => 'required|max:255',
-                'department' => 'required|string|max:255',
+                'userDepartment' => 'required|string|max:255',
                 'permanentaddress' => 'required|string|max:255',
                 'comnpanyexperience' => 'required|numeric',
-                'designation' => 'required|string|max:255',
+                'userDesignation' => 'required|string|max:255',
                 'city' => 'required|string|max:255',
-                'employeestatus' => 'required|string|in:active,inactive',
+                // 'employeestatus' => 'required|string|in:active,inactive',
+                'employeestatus' => 'required|string|in:0,1',
+
                 'reportingmanager' => 'required|string|max:255',
                 'dob' => 'required|date',
                 'lastworkingday' => 'required|date',
@@ -251,18 +337,16 @@ class EmployeeController extends Controller
                 'currentaddress.required' => 'Current address is required.',
                 'currentaddress.max' => 'Current address must not exceed 255 characters.',
                 'trainingcompletion.max' => 'Training completion must not exceed 255 characters.',
-                'department.required' => 'Department is required.',
-                'department.max' => 'Department must not exceed 255 characters.',
+                'userDepartment.required' => 'Department is required.',
                 'permanentaddress.required' => 'Permanent address is required.',
                 'permanentaddress.max' => 'Permanent address must not exceed 255 characters.',
                 'comnpanyexperience.required' => 'Company experience is required.',
                 'comnpanyexperience.numeric' => 'Company experience must be a numeric value.',
-                'designation.required' => 'Designation is required.',
-                'designation.max' => 'Designation must not exceed 255 characters.',
+                'userDesignation.required' => 'Designation is required.',
                 'city.required' => 'City is required.',
                 'city.max' => 'City must not exceed 255 characters.',
                 'employeestatus.required' => 'Employee status is required.',
-                'employeestatus.in' => 'Employee status must be either active or inactive.',
+                // 'employeestatus.in' => 'Employee status must be either Active or Inactive.',
                 'reportingmanager.required' => 'Reporting manager is required.',
                 'reportingmanager.max' => 'Reporting manager must not exceed 255 characters.',
                 'dob.required' => 'Date of birth is required.',
@@ -289,6 +373,8 @@ class EmployeeController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
+
+
         $EmployeeId = $request->input('id');
         $empId = $request->input('empId');
         $emergencycontact = $request->input('emergencycontact');
@@ -296,10 +382,10 @@ class EmployeeController extends Controller
         $name = $request->input('name');
         $currentaddress = $request->input('currentaddress');
         $trainingcompletion = $request->input('trainingcompletion');
-        $department = $request->input('department');
+        $department = $request->input('userDepartment');
         $permanentaddress = $request->input('permanentaddress');
         $comnpanyexperience = $request->input('comnpanyexperience');
-        $designation = $request->input('designation');
+        $designation = $request->input('userDesignation');
         $city = $request->input('city');
         $employeestatus = $request->input('employeestatus');
         $reportingmanager = $request->input('reportingmanager');
@@ -339,81 +425,233 @@ class EmployeeController extends Controller
         return redirect()->route('employeeView')->with('success', 'Employee data updated successfully.');
     }
 
+
+
+    // public function employeeAllcation($id)
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $employeeName = employees::where('id', $id)->pluck('name');
+    //     $currentAllocation = AddworkesEmployee::where('employee_id', $id)
+    //         ->where('is_deleted', 0)
+    //         ->with('project')
+    //         ->get();
+
+    //     $pmEmployeeIds = $currentAllocation->pluck('project.pmemployeeId')->unique()->filter();
+
+    //     $pmNames = employees::whereIn('id', $pmEmployeeIds)->get()->keyBy('id');
+
+    //     $pastallocation = AddworkesEmployee::where('employee_id', $id)
+    //         ->where('is_deleted', 1)
+    //         ->with('project')
+    //         ->get();
+
+    //     return view('allocation', compact('currentAllocation', 'pastallocation', 'modules', 'pmNames', 'employeeName'));
+    // }
+    public function employeeAllcation($id)
+    {
+        if (Auth::user()->status == 0) {
+
+            $modules = Session::get('user_modules_' . auth()->id());
+            $employeeName = employees::where('id', $id)->pluck('name');
+            $currentAllocation = AddworkesEmployee::where('employee_id', $id)
+                ->where('is_deleted', 0)
+                ->with('project')
+                ->get();
+
+            $pmEmployeeIds = $currentAllocation->pluck('project.pmemployeeId')->unique()->filter();
+
+            $pmNames = employees::whereIn('id', $pmEmployeeIds)->get()->keyBy('id');
+
+            $pastallocation = AddworkesEmployee::where('employee_id', $id)
+                ->where('is_deleted', 1)
+                ->with('project')
+                ->get();
+
+            return view('allocation', compact('currentAllocation', 'pastallocation', 'modules', 'pmNames', 'employeeName'));
+        } elseif (Auth::user()->status === 1) {
+            if (Auth::user()->userDesignation == 'Project Manager') {
+                $employeeName = employees::where('id', $id)->pluck('name');
+                $currentAllocation = AddworkesEmployee::where('employee_id', $id)
+                ->where('is_deleted', 0)
+                ->with('project')
+                ->get();
+                
+                $pmEmployeeIds = $currentAllocation->pluck('project.pmemployeeId')->unique()->filter();
+                
+                $pmNames = employees::whereIn('id', $pmEmployeeIds)->get()->keyBy('id');
+                
+                $pastallocation = AddworkesEmployee::where('employee_id', $id)
+                ->where('is_deleted', 1)
+                ->with('project')
+                ->get();
+                // dd('here');
+                return view('users.allocationPm', compact('currentAllocation', 'pastallocation',  'pmNames', 'employeeName'));
+            }
+        }
+    }
+
     public function employeeimportCSV(Request $request)
     {
+        // Validation rules
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt|max:2048',
 
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'file' => 'required|file|mimes:csv',
-            ],
-            [
-                'file.required' => 'Please upload a CSV file.',
-                'file.mimes' => 'The uploaded file must be a CSV file.',
-            ]
-        );
+        ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+        $departmentMap = [
+            'Delivery' => 0,
+        ];
+
         $file = $request->file('file');
-        $fileContents = file($file->getPathname());
+        $fileName = $file->getClientOriginalName();
+        $fileTempName = $file->getPathname();
+
         $skipHeader = true;
-        foreach ($fileContents as $line) {
-            if ($skipHeader) {
+
+        // Check if file is a CSV
+        if (pathinfo($fileName, PATHINFO_EXTENSION) !== 'csv') {
+            return redirect()->back()->withErrors('The file must be a CSV.')->withInput();
+        }
+
+        $handle = fopen($fileTempName, 'r');
+
+        // Validate CSV columns (assuming you expect 21 columns based on your code)
+        $expectedColumnCount = 21;
+
+        while (($line = fgetcsv($handle)) !== false) {
+            if (empty($line)) {
+                continue;
+            } elseif ($skipHeader) {
                 $skipHeader = false;
                 continue;
             }
-            $data = str_getcsv($line);
-            $dob = date('Y-m-d', strtotime($data[13]));
-            $lastWorkingDays = date('Y-m-d', strtotime($data[14]));
-            $JoiningDate = date('Y-m-d', strtotime($data[16]));
-            $trainingCompletion = !empty($data[5]) ? date('Y-m-d', strtotime($data[5])) : null;
 
+            // Check if the line has the expected number of columns
+            if (count($line) !== $expectedColumnCount) {
+                fclose($handle);
+                return redirect()->back()->withErrors('The CSV file does not have the expected number of columns.')->withInput();
+            }
 
+            // Map department using departmentMap
+            $department = isset($departmentMap[$line[6]]) ? $departmentMap[$line[6]] : null;
+
+            // Validate dates and Aadhaar number (additional validation can be added)
+            $dob = date('Y-m-d', strtotime(str_replace('-', '/', $line[13])));
+            $lastWorkingDay = date('Y-m-d', strtotime(str_replace('-', '/', $line[14])));
+            $joiningDate = date('Y-m-d', strtotime(str_replace('-', '/', $line[16])));
+            $aadharnumber = $line[20];
+
+            // Insert or update employee record
             employees::create([
-                'empId' => $data[0],
-                'emergencycontact' => $data[1],
-                'pannumber' => $data[2],
-                'name' => $data[3],
-                'currentaddress' => $data[4],
-                'trainingcompletion' => $data[5],
-                'department' => $data[6],
-                'permanentaddress' => $data[7],
-                'comnpanyexperience' => (int) $data[8],
-                'designation' => $data[9],
-                'city' => $data[10],
-                'employeestatus' => $data[11],
-                'reportingmanager' => $data[12],
+                'empId' => !empty($line[0]) ? $line[0] : '',
+                'emergencycontact' => $line[1],
+                'pannumber' => $line[2],
+                'name' => $line[3],
+                'currentaddress' => $line[4],
+                'trainingcompletion' => $line[5],
+                'department' => $department,
+                'permanentaddress' => $line[7],
+                'comnpanyexperience' => (int) $line[8],
+                'designation' => $line[9],
+                'city' => $line[10],
+                'employeestatus' => $line[11],
+                'reportingmanager' => $line[12],
                 'dob' => $dob,
-                'lastworkingday' => $lastWorkingDays,
-                'officialemail' => $data[15],
-                'joiningdate' => $JoiningDate,
-                'personalemail' => $data[17],
-                'higestqualification' => $data[18],
-                'contactdetails' => $data[19],
-                'aadharnumber' => $data[20],
+                'lastworkingday' => $lastWorkingDay,
+                'officialemail' => $line[15],
+                'joiningdate' => $joiningDate,
+                'personalemail' => $line[17],
+                'higestqualification' => $line[18],
+                'contactdetails' => $line[19],
+                'aadharnumber' => $aadharnumber,
             ]);
-        }
-        return redirect()->back()->with('success', 'Employees imported successfully.');
-    }
-
-    public function employeeExportCSV()
-    {
-        $allUsers = employees::all();
-        $csvFileName = 'products.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $csvFileName . '"',
-        ];
-
-        $handle = fopen('php://output', 'w');
-        fputcsv($handle, ['empId', 'emergencycontact', 'pannumber', 'name', 'currentaddress', 'trainingcompletion', 'department', 'permanentaddress', 'comnpanyexperience', 'designation', 'city', 'employeestatus', 'reportingmanager', 'dob', 'lastworkingday', 'officialemail', 'joiningdate', 'personalemail', 'higestqualification', 'contactdetails', 'aadharnumber',]); // Add more headers as needed
-        foreach ($allUsers as $product) {
-            fputcsv($handle, [$product->empId, $product->emergencycontact, $product->pannumber, $product->name, $product->currentaddress, $product->trainingcompletion, $product->department, $product->permanentaddress, $product->comnpanyexperience, $product->designation, $product->city, $product->employeestatus, $product->reportingmanager, $product->dob, $product->lastworkingday, $product->officialemail, $product->joiningdate, $product->personalemail, $product->higestqualification, $product->contactdetails, $product->aadharnumber]); // Add more fields as needed
         }
 
         fclose($handle);
-        return Response::make('', 200, $headers);
+
+        return redirect()->back()->with('status', 'Employees imported successfully.');
+    }
+
+
+
+
+
+
+
+    public function employeeExportCSV()
+    {
+        header("Content-type: text/csv");
+        header("Content-Disposition: attachment; filename=employees.csv");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $departmentMapping = [
+            0 => 'Delivery',
+        ];
+
+        $allUsers = Employees::all();
+        error_log("Total records fetched: " . count($allUsers));
+
+        $columns = [
+            'empId',
+            'emergencycontact',
+            'pannumber',
+            'name',
+            'currentaddress',
+            'trainingcompletion',
+            'department',
+            'permanentaddress',
+            'comnpanyexperience',
+            'designation',
+            'city',
+            'employeestatus',
+            'reportingmanager',
+            'dob',
+            'lastworkingday',
+            'officialemail',
+            'joiningdate',
+            'personalemail',
+            'higestqualification',
+            'contactdetails',
+            'aadharnumber'
+        ];
+
+        $file = fopen('php://output', 'w');
+        fputcsv($file, $columns);
+
+        foreach ($allUsers as $employee) {
+            $department = isset($departmentMapping[$employee->department]) ? $departmentMapping[$employee->department] : '';
+
+            if (empty($department)) {
+                $department = 'Delivery';
+            }
+
+            fputcsv($file, [
+                $employee->empId,
+                $employee->emergencycontact,
+                $employee->pannumber,
+                $employee->name,
+                $employee->currentaddress,
+                $employee->trainingcompletion,
+                $department,
+                $employee->permanentaddress,
+                $employee->comnpanyexperience,
+                $employee->designation,
+                $employee->city,
+                $employee->employeestatus,
+                $employee->reportingmanager,
+                $employee->dob,
+                $employee->lastworkingday,
+                $employee->officialemail,
+                $employee->joiningdate,
+                $employee->personalemail,
+                $employee->higestqualification,
+                $employee->contactdetails,
+                $employee->aadharnumber,
+            ]);
+        }
+
+        fclose($file);
+        exit();
     }
 }

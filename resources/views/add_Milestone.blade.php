@@ -1,17 +1,20 @@
 @extends('header')
-@section('title', 'Add Milestone')
+
+@section('title', 'View Milestone')
 
 @section('content')
+
     <div class="layout-px-spacing">
         <div class="container">
             <div class="row">
-
                 <div class="col-12">
                     <div class="widget-header">
                         <br>
                         <br>
-                        <h4 style="margin-top: 5px;text-align: center;font-size: xxx-large;font-family: ui-sans-serif;">View
-                            Milestone</h4>
+                        <h4 class="text-blue"
+                            style="margin-top: 5px;text-align: center;font-size: xxx-large;font-family: ui-sans-serif;">
+                            View Milestone
+                        </h4>
                         @if (session('status'))
                             <div class="alert alert-success">
                                 {{ session('status') }}
@@ -21,8 +24,7 @@
                             <button type="button" class="btn btn-primary btn-sm"
                                 onclick="window.location='{{ route('addmilestone.idNew', ['id' => $projectId]) }}'">Add
                                 Milestone</button>
-                            <a href="{{ url()->previous() }}" class="btn btn-danger btn-sm">Go Back</a>
-
+                            <a href="{{ route('manage_project') }}" class="btn btn-danger btn-sm">Go Back</a>
                         </div>
                     </div>
                 </div>
@@ -63,12 +65,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    use Illuminate\Support\Str;
+                                @endphp
                                 @php $sn = 1; @endphp
                                 @foreach ($data as $milestone)
+                                    @php
+                                        $description = $milestone['description'];
+                                        $shortDescription = Str::words($description, 10, '...');
+                                    @endphp
                                     <tr>
                                         <th>{{ $sn++ }}</th>
                                         <td>{{ $milestone['name'] }}</td>
-                                        <td>{{ $milestone['description'] }}</td>
+                                        <td>
+                                            <div class="description-container">
+                                                <div class="d-flex align-items-center">
+                                                    <p class="description-text">
+                                                        {{ $shortDescription }}
+                                                    </p>
+                                                    <span>
+                                                        <a class="link btn-sm toggle-description text-blue">Show More</a>
+                                                    </span>
+                                                </div>
+                                                <p class="full-description" style="display: none;">
+                                                    {{ $description }}
+                                                </p>
+                                            </div>
+                                        </td>
                                         <td>{{ $milestone['targetComplectionDate'] }}</td>
                                         <td>{{ $milestone['hours'] }}</td>
                                         <td>
@@ -78,7 +101,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-link text-danger"
-                                                    onclick="confirmDelete()">
+                                                    onclick="return confirmDelete()">
                                                     <i class="fa fa-trash fa"></i>
                                                 </button>
                                             </form>
@@ -96,11 +119,55 @@
             </div>
         </div>
     </div>
+
     <script>
         function confirmDelete() {
-            if (confirm("Are you sure you want to delete this MileStone?")) {
-                document.getElementById('deleteForm').submit();
-            }
+            return confirm("Are you sure you want to delete this Milestone?");
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.toggle-description').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const container = this.closest('.description-container');
+                    const shortText = container.querySelector('.description-text');
+                    const fullText = container.querySelector('.full-description');
+                    const isExpanded = this.textContent === 'Show Less';
+
+                    if (isExpanded) {
+                        shortText.style.display = 'block';
+                        fullText.style.display = 'none';
+                        this.textContent = 'Show More';
+                    } else {
+                        shortText.style.display = 'none';
+                        fullText.style.display = 'block';
+                        this.textContent = 'Show Less';
+                    }
+                });
+            });
+        });
     </script>
+
+    <style>
+        .description-container {
+            position: relative;
+        }
+
+        .description-text {
+            margin: 0;
+        }
+
+        .full-description {
+            margin: 0;
+            display: none;
+        }
+
+        .text-blue {
+            color: #007bff;
+        }
+
+        .text-blue:hover {
+            color: darkblue;
+        }
+    </style>
+
 @endsection

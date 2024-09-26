@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('project_id');
             $table->integer('userDepartment');
+            $table->tinyInteger('status');
+            $table->tinyInteger('is_deleted');
+            
 
             $table->string('userDesignation');
             $table->integer('userId');

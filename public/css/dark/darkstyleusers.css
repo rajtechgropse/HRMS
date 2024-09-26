@@ -1,0 +1,108 @@
+body.dark a,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark p {
+    color: #fff;
+}
+
+body.dark {
+    background-color: #00001a;
+}
+
+body.dark .admin_header {
+    background: #1b2e4b !important;
+    color: #fff !important;
+}
+
+body.dark .admin_header a.logo h3 {
+    color: #fff;
+}
+
+body.dark .admin_siderbarr {
+    background-color: #1b2e4b !important;
+    color: #fff;
+}
+
+body.dark .admin_siderbarr a,
+body.dark .admin_siderbarr a i {
+    color: #fff !important;
+}
+
+body.dark .admin_siderbarr a.active {
+    background-color: #002db3 !important;
+}
+
+body.dark .card {
+    background-color: #1b2e4b !important;
+    color: #fff !important;
+}
+
+body.dark .after-dot::before {
+    background-color: #fff;
+}
+
+body.dark .text-dark {
+    color: #fff !important;
+}
+
+body.dark .headleft h2 {
+    color: #fff;
+}
+
+body.dark .table thead th,
+body.dark .table tbody tr td {
+    color: #fff;
+}
+
+body.dark .table tbody tr:hover {
+    color: #fff;
+    background-color: rgb(69 181 225) !important;
+}
+
+body.dark .description_main {
+    background-color: rgb(69 181 225) !important;
+}
+
+body.dark .box_same3,
+body.dark .box_same3_plusicon {
+    background-color: rgb(69 181 225) !important;
+    color: #fff;
+}
+
+body.dark .fs-sm-6 {
+    /* font-size: 0.8rem !important; */
+    color: #b1acac !important;
+}
+
+body.dark .box_same,
+body.dark .box_same2,
+body.dark .box_same3 {
+    background-color: rgb(69 181 225) !important;
+}
+
+body.dark .btn.btn-info.dropdown-toggle,
+body.dark .btn.btn-info {
+    color: #fff;
+    background-color: #002db3 !important;
+}
+
+body.dark .dropdown-item {
+    color: #00001a;
+}
+
+body.dark .widget {
+    color: #fff !important;
+    background-color: #1b2e4b !important;
+}
+
+body.dark .widget-card-four .w-header .w-info h6 {
+    color: #fff !important;
+}
+
+body.dark .headleft h2 {
+    color: #fff !important;
+}

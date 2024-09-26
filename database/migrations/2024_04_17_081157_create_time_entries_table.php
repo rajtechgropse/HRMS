@@ -17,7 +17,19 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->date('date');
             $table->string('day');
-            $table->tinyInteger('status')->default(0)->comment('0: Not submit, 1: Submit Data');
+            $table->integer('approvedby_employee_id')->NULL();
+            $table->tinyInteger('status')->default(0)->comment('0: Unapproved, 1: approved, 2:reject');
+            $table->tinyInteger('is_ProjectManagers')->NULL()->comment('0: rejected, 1: approved, 2:Pending');
+            $table->tinyInteger('is_Admin')->NULL()->comment('0: rejected, 1: approved, 2:Pending');
+            $table->string('reopen_reason_user')->NULL();
+            $table->string('reopen_rejected_reason_pm')->NULL();
+            $table->date('approved_rejected_date')->NULL();
+
+            
+
+            
+            $table->string('rejectionReason')->nullable();
+
             $table->decimal('monday_hours', 8, 2)->default(0.00);
             $table->decimal('tuesday_hours', 8, 2)->default(0.00);
             $table->decimal('wednesday_hours', 8, 2)->default(0.00);
