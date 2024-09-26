@@ -48,14 +48,25 @@
                                         <th class="text-center">Project Name</th>
                                         <th class="text-center">Employee Name</th>
                                         <th class="text-center">Employee Reopen Reason</th>
+<<<<<<< HEAD
                                         <th class="text-center">Total Hours</th>
                                         <th class="text-center">Project Managers</th>
                                         <th class="text-center">PM Reject Reason</th>
                                         <th class="text-center">PM Time</th>
+=======
+
+                                        <th class="text-center">Total Hours</th>
+                                        <th class="text-center">Project Managers</th>
+                                        <th class="text-center">PM Reject Reason</th>
+
+                                        <th class="text-center">PM Time</th>
+                                        
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         <th class="text-center">Admin</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+<<<<<<< HEAD
                                     @if(isset($TotalSubmitedData) && count($TotalSubmitedData) > 0)
                                         @foreach ($TotalSubmitedData as $index => $data)
                                             <tr>
@@ -97,6 +108,52 @@
                                             <td colspan="10" class="text-center">No timesheet data available.</td>
                                         </tr>
                                     @endif
+=======
+                                    @forelse ($TotalSubmitedData as $index => $data)
+                                        <tr>
+                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td class="text-center">{{ $data['date'] }}</td>
+                                            <td class="text-center">{{ $data['projectName'] }}</td>
+                                            <td class="text-center">{{ $data['employeeName'] }}</td>
+                                            <td class="text-center">{{ $data['userRejectReason'] }}</td>
+
+                                            <td class="text-center">{{ $data['total_hours'] }}</td>
+                                            <td class="text-center">
+                                                @if ($data['is_ProjectManagers'] === 1)
+                                                    <i class="fa fa-check-circle fa-lg text-success" aria-hidden="true"></i>
+                                                @elseif($data['is_ProjectManagers'] === 0)
+                                                    <i class="fa fa-times-circle fa-lg text-danger" aria-hidden="true"></i>
+                                                @else
+                                                    <a class="btn btn-sm btn-warning">Pending</a>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">{{ $data['pmRejectReason'] }}</td>
+
+                                            <td class="text-center">{{ $data['pmApproveRejectedTime'] }}</td>
+
+                                            <td class="text-center">
+                                                @if ($data['is_Admin'] === 1)
+                                                    <i class="fa fa-check-circle fa-lg text-success" aria-hidden="true"
+                                                        onclick="sendApprovalStatusAdmin(1, {{ $data['timesheetId'] }}, 2)"></i>
+                                                @elseif($data['is_Admin'] === 0)
+                                                    <i class="fa fa-times-circle fa-lg text-danger" aria-hidden="true"
+                                                        onclick="sendApprovalStatusAdmin(0, {{ $data['timesheetId'] }}, 0)"></i>
+                                                @elseif($data['is_ProjectManagers'] == 0 || $data['is_ProjectManagers'] == 1)
+
+
+                                                    <i class="fa fa-check-circle fa-lg text-success" aria-hidden="true"
+                                                        onclick="sendApprovalStatusAdmin(1, {{ $data['timesheetId'] }}, 2)"></i>
+                                                    <i class="fa fa-times-circle fa-lg text-danger" aria-hidden="true"
+                                                        onclick="sendApprovalStatusAdmin(0, {{ $data['timesheetId'] }}, 0)"></i>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="text-center">No timesheet data available.</td>
+                                        </tr>
+                                    @endforelse
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                 </tbody>
                             </table>
                         </div>

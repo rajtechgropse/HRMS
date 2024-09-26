@@ -37,7 +37,13 @@
                                         <tr role="row">
                                             <td class="text-center">{{ $count++ }}</td>
                                             <td class="text-center">{{ $user['projectname'] }}</td>
+<<<<<<< HEAD
                                             <td class="text-center">{{ $user['cilentname'] }}</td>
+=======
+                                            <td class="text-center">
+                                                
+                                                {{ $user['cilentname'] }}</td>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                             <td class="text-center">{{ $user['csm'] }}</td>
                                             <td class="text-center">
                                                 @if (isset($projectManagers[$user['pmemployeeId']]))

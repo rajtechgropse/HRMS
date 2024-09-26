@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\employees;
 use Illuminate\Support\Facades\Session;
 use App\Models\TimeEntry;
@@ -12,6 +13,19 @@ use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Validator;
 
+=======
+use Illuminate\Support\Facades\Session;
+use App\Models\TimeEntry;
+use App\Models\addworkesEmployee;
+use App\Models\employees;
+use Carbon\Carbon;
+
+
+use Illuminate\Support\Facades\Validator;
+
+
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -32,6 +46,7 @@ class DashboardController extends Controller
     //     $employeesWithoutAddWorkRecordsDetailsCount = employees::whereIn('id', $employeesWithoutAddWorkRecords)->count();
 
     //     $modules = Session::get('user_modules_' . auth()->id());
+<<<<<<< HEAD
 
     //     // dd($beachDetailsCount);
 
@@ -46,12 +61,96 @@ class DashboardController extends Controller
     //     }
 
 
+=======
+    //     $employeeIds = addworkesEmployee::pluck('employee_id')->unique();
+
+    //     // Fetch distinct time entries with status=1
+    //     $timeEntries = TimeEntry::whereIn('employee_id', $employeeIds)
+    //         ->where('status', 1)
+    //         ->with(['employee', 'project', 'addworkesEmployees'])
+    //         ->distinct()
+    //         ->get();
+
+    //     $employeeData = [];
+    //     $currentDate = Carbon::now(); // Today's date
+    //     $currentWeekStart = $currentDate->copy()->startOfWeek(); // Monday of the current week
+    //     $currentWeekEnd = $currentDate->copy()->endOfWeek(); // Sunday of the current week
+
+    //     foreach ($timeEntries as $timeEntry) {
+    //         $employeeId = $timeEntry->employee->id;
+    //         $employeeName = $timeEntry->employee->name;
+    //         $projectName = $timeEntry->project->projectname;
+    //         $relevantEmployeeAllocation = $timeEntry->addworkesEmployees->first();
+
+    //         if ($relevantEmployeeAllocation) {
+    //             $employeeAllocationStartDate = Carbon::parse($relevantEmployeeAllocation->startdate);
+    //             $employeeAllocationEndDate = Carbon::parse($relevantEmployeeAllocation->enddate);
+
+    //             $mondaysDates = [];
+    //             $currentDate = $employeeAllocationStartDate->copy()->startOfWeek(); // Start from the first Monday in the allocation period
+
+    //             while ($currentDate <= $employeeAllocationEndDate) {
+    //                 if ($currentDate->dayOfWeek === Carbon::MONDAY) {
+    //                     // Avoid adding duplicate Mondays
+    //                     if (!in_array($currentDate->toDateString(), $mondaysDates)) {
+    //                         $mondaysDates[] = $currentDate->toDateString();
+    //                     }
+    //                 }
+    //                 $currentDate->addWeek();
+    //             }
+
+    //             // Filter out the current week
+    //             $mondaysDates = array_filter($mondaysDates, function($date) use ($currentWeekStart) {
+    //                 return strtotime($date) < strtotime($currentWeekStart);
+    //             });
+
+    //             // Ensure mondaysDates has unique dates
+    //             $mondaysDates = array_unique($mondaysDates);
+
+    //             // Get the dates for which timesheets are submitted
+    //             $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+    //                 ->where('employee_id', $employeeId)
+    //                 ->where('status', 1)
+    //                 ->pluck('date')
+    //                 ->toArray();
+
+    //             // Ensure submittedTimesheets has unique dates
+    //             $submittedTimesheets = array_unique($submittedTimesheets);
+
+    //             // Determine pending dates
+    //             $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheets);
+    //             $pendingTimesheetDatesBeforeCurrent = [];
+
+    //             foreach ($pendingTimesheetDates as $date) {
+    //                 if (strtotime($date) < strtotime(date('Y-m-d'))) {
+    //                     $pendingTimesheetDatesBeforeCurrent[] = $date;
+    //                 }
+    //             }
+
+    //             // Check if the employee and project combination already exists
+    //             $key = $employeeName . '|' . $projectName;
+
+    //             if (!array_key_exists($key, $employeeData) && !empty($pendingTimesheetDatesBeforeCurrent)) {
+    //                 $employeeData[$key] = [
+    //                     'employee_name' => $employeeName,
+    //                     'project_name' => $projectName,
+    //                     'pending_dates' => $pendingTimesheetDatesBeforeCurrent,
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     $employeeDataCollection = collect(array_values($employeeData)); // Use array_values to reindex
 
     //     // Count the total number of entries
     //     $totalEntries = $employeeDataCollection->count();
 
+<<<<<<< HEAD
     //     return view('dashboard', ['modules' => $modules, 'approvedCount' => $approvedCount, 'pendingCount' => $pendingCount, 'rejectedCount' => $rejectedCount, 'employeesWithoutAddWorkRecordsDetailsCount' => $employeesWithoutAddWorkRecordsDetailsCount, 'totalEntries' => $totalEntries, 'beachDetailsCount' => $beachDetailsCount]);
+=======
+    //     return view('dashboard', ['modules' => $modules, 'approvedCount' => $approvedCount, 'pendingCount' => $pendingCount, 'rejectedCount' => $rejectedCount, 'employeesWithoutAddWorkRecordsDetailsCount' => $employeesWithoutAddWorkRecordsDetailsCount,'totalEntries'=>$totalEntries]);
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     // }
     public function dashboard()
     {
@@ -258,18 +357,25 @@ class DashboardController extends Controller
     }
 
 
+<<<<<<< HEAD
 
     public function approvedData()
     {
         $modules = Session::get('user_modules_' . auth()->id());
 
         // Fetch approved time entries
+=======
+    public function approvedData()
+    {
+        $modules = Session::get('user_modules_' . auth()->id());
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $approvedData = TimeEntry::where('status', 1)->get();
         $employeeIds = $approvedData->pluck('employee_id');
 
         $timeEntriesQuery = TimeEntry::whereIn('employee_id', $employeeIds)
             ->where('status', 1)
             ->with(['employee', 'project'])
+<<<<<<< HEAD
             ->orderBy('date', 'desc'); // Order by date in descending order
 
 
@@ -277,6 +383,11 @@ class DashboardController extends Controller
         $timeEntries = $timeEntriesQuery->paginate(15);
 
         // Transform the paginated results
+=======
+            ->orderBy('date', 'desc');
+        $timeEntries = $timeEntriesQuery->paginate(15);
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $data = $timeEntries->map(function ($timeEntry) {
             return [
                 'employeeName' => $timeEntry['employee']['name'],
@@ -289,7 +400,11 @@ class DashboardController extends Controller
         return view('dashboardApprovedData', [
             'modules' => $modules,
             'approvedData' => $data,
+<<<<<<< HEAD
             'timeEntries' => $timeEntries, // Pass the paginated results to the view
+=======
+            'timeEntries' => $timeEntries,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         ]);
     }
 
@@ -306,6 +421,10 @@ class DashboardController extends Controller
             ->with(['employee', 'project'])
             ->orderBy('date', 'desc');
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $timeEntries = $timeEntriesQuery->paginate(15);
 
         $data = $timeEntries->map(function ($timeEntry) {
@@ -319,7 +438,11 @@ class DashboardController extends Controller
         return view('dashboardPendingData', [
             'modules' => $modules,
             'approvedData' => $data,
+<<<<<<< HEAD
             'timeEntries' => $timeEntries, // Pass the paginated results to the view
+=======
+            'timeEntries' => $timeEntries,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         ]);
     }
 
@@ -350,6 +473,7 @@ class DashboardController extends Controller
         return view('dashboardrejectedData', [
             'modules' => $modules,
             'approvedData' => $data,
+<<<<<<< HEAD
             'timeEntries' => $timeEntries, // Pass paginated result
         ]);
     }
@@ -372,10 +496,14 @@ class DashboardController extends Controller
             'modules' => $modules,
             'data' => $employeeNames,
             'user' => $employeesWithoutAddWorkRecordsDetails,
+=======
+            'timeEntries' => $timeEntries,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         ]);
     }
 
 
+<<<<<<< HEAD
 
 
     // public function fetchData(Request $request)
@@ -554,11 +682,32 @@ class DashboardController extends Controller
             // Default behavior: Fetch all data
             $entries = TimeEntry::whereIn('status', [0, 1, 2])->get();
         }
+=======
+    public function fetchData(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->all()], 400);
+        }
+
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
+        $entries = TimeEntry::whereBetween('date', [$start_date, $end_date])
+            ->whereIn('status', [0, 1, 2])
+            ->orderBy('date', 'desc')
+            ->get();
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
         $approvedCount = $entries->where('status', 1)->count();
         $rejectedCount = $entries->where('status', 2)->count();
         $pendingCount = $entries->where('status', 0)->count();
 
+<<<<<<< HEAD
         // Find employees who are not allocated during the period
         $allEmployeeIds = employees::where('department', '0')->pluck('id');
 
@@ -580,10 +729,13 @@ class DashboardController extends Controller
         $employeesWithoutAddWorkRecordsDetails = employees::whereIn('id', $employeesWithoutAddWorkRecords)
             ->paginate(15);
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         return response()->json([
             'approvedCount' => $approvedCount,
             'pendingCount' => $pendingCount,
             'rejectedCount' => $rejectedCount,
+<<<<<<< HEAD
             'employeesWithoutAddWorkRecordsCount' => $employeesWithoutAddWorkRecordsDetails->total(),
             'employeeNames' => $employeesWithoutAddWorkRecordsDetails->pluck('name'),
             'employeesWithoutAddWorkRecordsDetails' => $employeesWithoutAddWorkRecordsDetails->items(),
@@ -593,11 +745,107 @@ class DashboardController extends Controller
 
 
 
+=======
+        ]);
+    }
+    // public function notSubmitedData()
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $employeeIds = addworkesEmployee::pluck('employee_id')->unique();
+
+    //     // Fetch distinct time entries with status=1
+    //     $timeEntries = TimeEntry::whereIn('employee_id', $employeeIds)
+    //         ->where('status', 1)
+    //         ->with(['employee', 'project', 'addworkesEmployees'])
+    //         ->distinct()
+    //         ->get();
+
+    //     $employeeData = [];
+    //     $currentDate = Carbon::now(); // Today's date
+    //     $currentWeekStart = $currentDate->copy()->startOfWeek(); // Monday of the current week
+    //     $currentWeekEnd = $currentDate->copy()->endOfWeek(); // Sunday of the current week
+
+    //     foreach ($timeEntries as $timeEntry) {
+    //         $employeeId = $timeEntry->employee->id;
+    //         $employeeName = $timeEntry->employee->name;
+    //         $projectName = $timeEntry->project->projectname;
+    //         $relevantEmployeeAllocation = $timeEntry->addworkesEmployees->first();
+
+    //         if ($relevantEmployeeAllocation) {
+    //             $employeeAllocationStartDate = Carbon::parse($relevantEmployeeAllocation->startdate);
+    //             $employeeAllocationEndDate = Carbon::parse($relevantEmployeeAllocation->enddate);
+
+    //             $mondaysDates = [];
+    //             $currentDate = $employeeAllocationStartDate->copy()->startOfWeek(); // Start from the first Monday in the allocation period
+
+    //             while ($currentDate <= $employeeAllocationEndDate) {
+    //                 if ($currentDate->dayOfWeek === Carbon::MONDAY) {
+    //                     // Avoid adding duplicate Mondays
+    //                     if (!in_array($currentDate->toDateString(), $mondaysDates)) {
+    //                         $mondaysDates[] = $currentDate->toDateString();
+    //                     }
+    //                 }
+    //                 $currentDate->addWeek();
+    //             }
+
+    //             // Filter out the current week
+    //             $mondaysDates = array_filter($mondaysDates, function ($date) use ($currentWeekStart) {
+    //                 return strtotime($date) < strtotime($currentWeekStart);
+    //             });
+
+    //             // Ensure mondaysDates has unique dates
+    //             $mondaysDates = array_unique($mondaysDates);
+
+    //             // Get the dates for which timesheets are submitted
+    //             $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+    //                 ->where('employee_id', $employeeId)
+    //                 ->where('status', 1)
+    //                 ->pluck('date')
+    //                 ->toArray();
+
+    //             // Ensure submittedTimesheets has unique dates
+    //             $submittedTimesheets = array_unique($submittedTimesheets);
+
+    //             // Determine pending dates
+    //             $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheets);
+    //             $pendingTimesheetDatesBeforeCurrent = [];
+
+    //             foreach ($pendingTimesheetDates as $date) {
+    //                 if (strtotime($date) < strtotime(date('Y-m-d'))) {
+    //                     $pendingTimesheetDatesBeforeCurrent[] = $date;
+    //                 }
+    //             }
+
+    //             // Check if the employee and project combination already exists
+    //             $key = $employeeName . '|' . $projectName;
+
+    //             if (!array_key_exists($key, $employeeData) && !empty($pendingTimesheetDatesBeforeCurrent)) {
+    //                 $employeeData[$key] = [
+    //                     'employee_name' => $employeeName,
+    //                     'project_name' => $projectName,
+    //                     'pending_dates' => $pendingTimesheetDatesBeforeCurrent,
+    //                 ];
+    //             }
+    //         }
+    //     }
+
+    //     $employeeDataCollection = collect(array_values($employeeData)); // Use array_values to reindex
+
+    //     return view('weekssubmissionReminder', [
+    //         'modules' => $modules,
+    //         'data' => $employeeDataCollection, // Pass data to the view
+    //     ]);
+    // }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function notSubmitedData()
     {
         $modules = Session::get('user_modules_' . auth()->id());
         $employeeIds = addworkesEmployee::pluck('employee_id')->unique();
 
+<<<<<<< HEAD
+=======
+        // Fetch distinct time entries with status=1
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $timeEntries = TimeEntry::whereIn('employee_id', $employeeIds)
             ->where('status', 1)
             ->with(['employee', 'project', 'addworkesEmployees'])
@@ -682,6 +930,7 @@ class DashboardController extends Controller
             'data' => $employeeDataCollection, // Pass data to the view
         ]);
     }
+<<<<<<< HEAD
     // public function beachLog(){
     //     $allEmployeeDetails = addworkesEmployee::pluck('allocationpercentage');
     //     dd($allEmployeeDetails);
@@ -903,4 +1152,60 @@ class DashboardController extends Controller
     return view('expiringAllocationEmployeeData',compact('expiringEmployeeData','modules','expiringEmployees'));
 }
 
+=======
+
+    public function nonAllocationUser()
+    {
+        $modules = Session::get('user_modules_' . auth()->id());
+        $allEmployeeIds = employees::where('department', '0')->pluck('id');
+        $employeesWithAddWorkRecords = addworkesEmployee::pluck('employee_id')->unique();
+        $employeesWithoutAddWorkRecords = $allEmployeeIds->diff($employeesWithAddWorkRecords);
+        $employeesWithoutAddWorkRecordsDetails = employees::whereIn('id', $employeesWithoutAddWorkRecords)->paginate(15);
+        $employeesWithoutAddWorkRecordsCount = $employeesWithoutAddWorkRecordsDetails->count();
+        $employeeNames = $employeesWithoutAddWorkRecordsDetails->pluck('name');
+
+        return view('non_allocation_user',  [
+            'modules' => $modules,
+            'data' => $employeeNames,
+            'user' => $employeesWithoutAddWorkRecordsDetails,
+        ]);
+    }
+    public function expiringData()
+    {
+        $modules = Session::get('user_modules_' . auth()->id());
+
+        $currentMonthStart = Carbon::now()->startOfMonth();
+        $currentMonthEnd = Carbon::now()->endOfMonth();
+
+        // Fetch employees whose projects expire in the current month
+        $expiringEmployees = addworkesEmployee::with('project')
+            ->where('is_deleted', 0)
+            ->whereHas('project', function ($query) use ($currentMonthStart, $currentMonthEnd) {
+                $query->whereBetween('enddate', [$currentMonthStart, $currentMonthEnd]);
+            })
+            ->paginate(15);
+
+        // Retrieve project manager names
+        $expiringEmployeeData = $expiringEmployees->map(function ($employee) {
+            $pmEmployeeId = $employee->project->pmemployeeId;
+
+            $pmEmployeeName = employees::where('id', $pmEmployeeId)->value('name');
+
+            return [
+                'employee_id' => $employee->employee_Id,
+                'employee_name' => $employee->employee->name,
+                'project_id' => $employee->project->id,
+                'pm_employee_id' => $pmEmployeeId,
+                'pm_employee_name' => $pmEmployeeName, // Add the PM name here
+                'project_name' => $employee->project->projectname,
+                'start_date' => $employee->startdate,
+                'end_date' => $employee->enddate,
+                'allocationpercentage' => $employee->allocationpercentage,
+            ];
+        });
+
+
+        return view('expiringAllocationEmployeeData', compact('expiringEmployeeData', 'modules', 'expiringEmployees'));
+    }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 }

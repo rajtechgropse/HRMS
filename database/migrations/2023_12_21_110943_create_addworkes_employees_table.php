@@ -16,6 +16,12 @@ return new class extends Migration
             $table->integer('project_id');
             $table->integer('userDepartment');
             $table->tinyInteger('status');
+<<<<<<< HEAD
+=======
+            $table->tinyInteger('is_deleted');
+            
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             $table->string('userDesignation');
             $table->integer('userId');
             $table->integer('allocationpercentage');

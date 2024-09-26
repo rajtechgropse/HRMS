@@ -8,6 +8,11 @@ use App\Models\AddworkesEmployee;
 use App\Models\employees;
 use App\Models\AddProjects;
 use App\Models\User;
+<<<<<<< HEAD
+=======
+use Illuminate\Http\JsonResponse;
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
 
@@ -18,6 +23,7 @@ use App\Models\User;
 
 class ApiController extends Controller
 {
+<<<<<<< HEAD
     public function userDetails()
    {
     // $projectManagers = 'Project Manager';
@@ -47,4 +53,36 @@ class ApiController extends Controller
         //  }
       
    }
+=======
+    public function getUserDetails()
+    {
+        try {
+            // Fetch user details where designation is 'Project Manager'
+            $usersDetails = User::where('userDesignation', 'Project Manager')->get();
+
+            // Check if any users were found
+            if ($usersDetails->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No users found with the designation Project Manager',
+                ], 404); // Not Found
+            }
+
+            // Return the details as a JSON response with success code
+            return response()->json([
+                'success' => true,
+                'data' => $usersDetails,
+                'message' => 'Users retrieved successfully',
+            ], 200); // OK
+
+        } catch (\Exception $e) {
+            // Handle any errors that occur
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving user details',
+                'error' => $e->getMessage(),
+            ], 500); // Internal Server Error
+        }
+    }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 }

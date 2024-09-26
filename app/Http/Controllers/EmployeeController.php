@@ -15,8 +15,15 @@ use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\QueryException;
+<<<<<<< HEAD
 use App\Models\AddworkesEmployee;
 use Illuminate\Support\Facades\Auth;
+=======
+// use App\Models\AddworkesEmployee;
+use App\Models\addworkesEmployee;
+use Illuminate\Support\Facades\Auth;
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
 
@@ -164,6 +171,15 @@ class EmployeeController extends Controller
         }
     }
 
+<<<<<<< HEAD
+=======
+    // public function employeeView()
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $employeeData = employees::paginate(15);
+    //     return view('Employee-view', ['modules' => $modules, 'employeeData' => $employeeData]);
+    // }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function employeeView()
     {
         if (Auth::user()->status == 0) {
@@ -412,6 +428,59 @@ class EmployeeController extends Controller
 
 
 
+    public function fetchDetails(Request $request)
+    {
+        $status = $request->input('status');
+        if ($status === '') {
+            return response()->json(['data' => []]);
+        }
+        $fetchDetails = employees::where('employeestatus', $status)->get();
+
+        $data = $fetchDetails->map(function ($employee) {
+            return [
+                'id' => $employee->id,
+                'empId' => $employee->empId,
+                'name' => $employee->name,
+                'department' => $employee->getDepartmentName(),
+                'designation' => $employee->designation,
+                'reportingmanager' => $employee->reportingmanager,
+                'officialemail' => $employee->officialemail,
+                'personalemail' => $employee->personalemail
+            ];
+        });
+
+        return response()->json(['data' => $data]);
+    }
+
+
+    public function fetchEmployeeDetailsAjax(Request $request)
+    {
+        $searchQuery = $request->input('search');
+
+        $employees = employees::where('name', 'like', '%' . $searchQuery . '%')
+            ->orWhere('empId', 'like', '%' . $searchQuery . '%')
+            ->orWhere('department', 'like', '%' . $searchQuery . '%')
+            ->orWhere('designation', 'like', '%' . $searchQuery . '%')
+            ->orWhere('officialemail', 'like', '%' . $searchQuery . '%')
+            ->orWhere('personalemail', 'like', '%' . $searchQuery . '%')
+            ->get();
+
+        $employees = $employees->map(function ($employee) {
+            return [
+                'id' => $employee->id,
+                'empId' => $employee->empId,
+                'name' => $employee->name,
+                'department' => $employee->getDepartmentName(),
+                'designation' => $employee->designation,
+                'officialemail' => $employee->officialemail,
+                'personalemail' => $employee->personalemail,
+                'reportingmanager' => $employee->reportingmanager,
+            ];
+        });
+
+        return response()->json(['data' => $employees]);
+    }
+
     public function ViewDetailsEmployee($id)
     {
         $employeeData = employees::find($id);
@@ -556,6 +625,7 @@ class EmployeeController extends Controller
         return redirect()->route('employeeView')->with('success', 'Employee data updated successfully.');
     }
 
+<<<<<<< HEAD
     // public function employeeAllcation($id){
     //     // dd('here');
     //     $EmployeeId = $id;
@@ -583,11 +653,20 @@ class EmployeeController extends Controller
     //     $modules = Session::get('user_modules_' . auth()->id());
 
     //     // Fetch current allocations
+=======
+
+
+    // public function employeeAllcation($id)
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $employeeName = employees::where('id', $id)->pluck('name');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     $currentAllocation = AddworkesEmployee::where('employee_id', $id)
     //         ->where('is_deleted', 0)
     //         ->with('project')
     //         ->get();
 
+<<<<<<< HEAD
     //     // Extract unique pmEmployeeIds from the currentAllocation
     //     $pmEmployeeIds = $currentAllocation->pluck('project.pmemployeeId')->unique()->filter();
 
@@ -596,13 +675,23 @@ class EmployeeController extends Controller
     // dd($pmNames);
     // $pmName
     //     // Fetch past allocations
+=======
+    //     $pmEmployeeIds = $currentAllocation->pluck('project.pmemployeeId')->unique()->filter();
+
+    //     $pmNames = employees::whereIn('id', $pmEmployeeIds)->get()->keyBy('id');
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     $pastallocation = AddworkesEmployee::where('employee_id', $id)
     //         ->where('is_deleted', 1)
     //         ->with('project')
     //         ->get();
 
+<<<<<<< HEAD
     //     // Pass data to the view
     //     return view('allocation', compact('currentAllocation', 'pastallocation', 'modules', 'pmNames'));
+=======
+    //     return view('allocation', compact('currentAllocation', 'pastallocation', 'modules', 'pmNames', 'employeeName'));
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     // }
     public function employeeAllcation($id)
     {
@@ -647,11 +736,15 @@ class EmployeeController extends Controller
         }
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function employeeimportCSV(Request $request)
     {
         // Validation rules
         $request->validate([
+<<<<<<< HEAD
             // 'file' => 'required|file|mimes:csv,txt|max:2048', // Validate file is a CSV and size is within limit
             'file' => 'required|file|mimes:csv,txt|max:2048', // Validate file is a CSV or TXT and size is within limit
 
@@ -661,6 +754,14 @@ class EmployeeController extends Controller
         $departmentMap = [
             'Delivery' => 0,
             // Add other departments if needed
+=======
+            'file' => 'required|file|mimes:csv,txt|max:2048',
+
+        ]);
+
+        $departmentMap = [
+            'Delivery' => 0,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         ];
 
         $file = $request->file('file');

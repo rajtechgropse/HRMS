@@ -32,10 +32,16 @@ class AddworkemployeeController extends Controller
     //     if (Auth::user()->status == 0) {
 
     //         if ($projectData) {
+<<<<<<< HEAD
     //             $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)->where('is_deleted', 0)->paginate(5);
     //             $employeeIds = $addworkesEmployees->pluck('employee_Id')->toArray();
                 
     //             $usersDetails = employees::whereIn('id', $employeeIds)->whereIn('is_deleted', 0)->pluck('name', 'id');
+=======
+    //             $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)->paginate(5);
+    //             $employeeIds = $addworkesEmployees->pluck('employee_Id')->toArray();
+    //             $usersDetails = employees::whereIn('id', $employeeIds)->pluck('name', 'id');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //             return view('addWorkEmployee', [
     //                 'modules' => $modules,
     //                 'projectData' => $projectData,
@@ -43,13 +49,22 @@ class AddworkemployeeController extends Controller
     //                 'usersDetails' => $usersDetails
     //             ]);
     //         }
+<<<<<<< HEAD
     //     } elseif (Auth::user()->status == 1) {
+=======
+    //     }
+    //     elseif(Auth::user()->status == 1){
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //         if ($projectData) {
     //             $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)->paginate(5);
     //             $employeeIds = $addworkesEmployees->pluck('employee_Id')->toArray();
     //             $usersDetails = employees::whereIn('id', $employeeIds)->pluck('name', 'id');
     //             return view('users.addWorkEmployeeUser', [
+<<<<<<< HEAD
 
+=======
+                   
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //                 'projectData' => $projectData,
     //                 'addworkesEmployees' => $addworkesEmployees,
     //                 'usersDetails' => $usersDetails
@@ -59,6 +74,7 @@ class AddworkemployeeController extends Controller
     // }
 
     public function addWorksEmployee($id)
+<<<<<<< HEAD
 {
     $modules = Session::get('user_modules_' . auth()->id());
     $projectData = AddProjects::find($id);
@@ -103,6 +119,55 @@ class AddworkemployeeController extends Controller
 }
 
 
+=======
+    {
+        $modules = Session::get('user_modules_' . auth()->id());
+        $projectData = AddProjects::find($id);
+    
+        if (!$projectData) {
+            Session::flash('error', 'Project not found.');
+            return redirect()->back();
+        }
+    
+        // Check user status and filter accordingly
+        if (Auth::user()->status == 0) {
+            // Fetch employees related to the project where is_deleted is 0
+            $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)
+                ->where('is_deleted', 0) // Ensure is_deleted is 0
+                ->paginate(5);
+    
+            // Extract employee IDs
+            $employeeIds = $addworkesEmployees->pluck('employee_Id')->toArray();
+            
+            // Fetch user details
+            $usersDetails = employees::whereIn('id', $employeeIds)
+                // ->where('is_deleted', 0) // Ensure is_deleted is 0
+                ->pluck('name', 'id');
+            
+            return view('addWorkEmployee', [
+                'modules' => $modules,
+                'projectData' => $projectData,
+                'addworkesEmployees' => $addworkesEmployees,
+                'usersDetails' => $usersDetails
+            ]);
+        } elseif (Auth::user()->status == 1) {
+            // Fetch employees related to the project regardless of is_deleted status
+            $addworkesEmployees = addworkesEmployee::where('project_id', $projectData->id)->where('is_deleted', 0 )->paginate(5);
+            
+            // Extract employee IDs
+            $employeeIds = $addworkesEmployees->pluck('employee_Id')->toArray();
+            
+            // Fetch user details regardless of is_deleted status
+            $usersDetails = employees::whereIn('id', $employeeIds)->pluck('name', 'id');
+            
+            return view('users.addWorkEmployeeUser', [
+                'projectData' => $projectData,
+                'addworkesEmployees' => $addworkesEmployees,
+                'usersDetails' => $usersDetails
+            ]);
+        }
+    }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function fetchUsersByDesignation($designation)
     {
         $users = User::where('designation', $designation)->get();
@@ -174,6 +239,7 @@ class AddworkemployeeController extends Controller
     //         'startdate' => $request->input('startdate'),
     //         'enddate' => $request->input('enddate'),
     //     ];
+<<<<<<< HEAD
 
     //     $existingProject = AddworkesEmployee::find($employeeId);
 
@@ -186,11 +252,29 @@ class AddworkemployeeController extends Controller
 
     //         $newTotalAllocation += $totalAllocation;
 
+=======
+    
+    //     $existingProject = AddworkesEmployee::find($employeeId);
+    
+    //     if ($existingProject) {
+    //         $newTotalAllocation = $request->input('allocationpercentage');
+    
+    //         $totalAllocation = AddworkesEmployee::where('employee_Id', $request->input('employee_Id'))
+    //             ->where('id', '!=', $employeeId)
+    //             ->sum('allocationpercentage');
+    
+    //         $newTotalAllocation += $totalAllocation;
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //         if ($newTotalAllocation > 100) {
     //             $errorMessage = 'Total allocation percentage for this user exceeds 100%';
     //             return redirect()->back()->withInput()->withErrors(['allocationpercentage' => $errorMessage]);
     //         }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //         $existingProject->fill($addworkesEmployee)->save();
     //         $project = AddProjects::find($request->input('projectId'));
     //         $employee = employees::where('id', $request->input('employee_Id'))->first();
@@ -200,14 +284,24 @@ class AddworkemployeeController extends Controller
     //     } else {
     //         $totalAllocation = AddworkesEmployee::where('employee_Id', $request->input('employee_Id'))->sum('allocationpercentage');
     //         $newTotalAllocation = $totalAllocation + $request->input('allocationpercentage');
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //         if ($newTotalAllocation > 100) {
     //             $errorMessage = 'Total allocation percentage for this user exceeds 100%';
     //             return redirect()->back()->withInput()->withErrors(['allocationpercentage' => $errorMessage]);
     //         }
+<<<<<<< HEAD
 
     //         $project = AddworkesEmployee::create($addworkesEmployee);
 
+=======
+    
+    //         $project = AddworkesEmployee::create($addworkesEmployee);
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //         if ($project) {
     //             $project = AddProjects::find($request->input('projectId'));
     //             $employee = employees::where('id', $request->input('employee_Id'))->first();
@@ -220,7 +314,11 @@ class AddworkemployeeController extends Controller
     //         }
     //     }
     // }
+<<<<<<< HEAD
     //     public function addworkesEmployeeUpdateStore(Request $request)
+=======
+    // public function addworkesEmployeeUpdateStore(Request $request)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     // {
     //     // Validate the request inputs
     //     $validator = Validator::make($request->all(), [
@@ -233,15 +331,24 @@ class AddworkemployeeController extends Controller
     //         'enddate' => 'required|date|after_or_equal:startdate',
     //         'employee_id' => 'required|exists:addworkes_employees,id' // ID for the record to update
     //     ]);
+<<<<<<< HEAD
 
     //     if ($validator->fails()) {
     //         return redirect()->back()->withInput()->withErrors($validator);
     //     }
 
+=======
+    
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withInput()->withErrors($validator);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     $employeeId = $request->input('employee_id'); // ID for the record to update
     //     $projectId = $request->input('projectId');
     //     $userId = $request->input('employee_Id');
     //     $allocationPercentage = $request->input('allocationpercentage');
+<<<<<<< HEAD
 
     //     // Check if the employee record to update exists
     //     $existingProject = AddworkesEmployee::find($employeeId);
@@ -250,26 +357,52 @@ class AddworkemployeeController extends Controller
     //         return redirect()->back()->with('status', 'Employee record not found.');
     //     }
 
+=======
+    
+    //     // Check if the employee record to update exists
+    //     $existingProject = AddworkesEmployee::find($employeeId);
+    
+    //     if (!$existingProject) {
+    //         return redirect()->back()->with('status', 'Employee record not found.');
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Check for duplicate assignment
     //     $duplicateAssignment = AddworkesEmployee::where('employee_Id', $userId)
     //         ->where('project_id', $projectId)
     //         ->where('id', '!=', $employeeId) // Exclude current record from the check
     //         ->first();
+<<<<<<< HEAD
 
     //     if ($duplicateAssignment) {
     //         return redirect()->back()->withInput()->withErrors(['employee_Id' => 'This employee is already assigned to the selected project.']);
     //     }
 
+=======
+    
+    //     if ($duplicateAssignment) {
+    //         return redirect()->back()->withInput()->withErrors(['employee_Id' => 'This employee is already assigned to the selected project.']);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Check the total allocation percentage
     //     $totalAllocation = AddworkesEmployee::where('employee_Id', $userId)
     //         ->where('id', '!=', $employeeId) // Exclude current record from the check
     //         ->sum('allocationpercentage');
     //     $newTotalAllocation = $totalAllocation + $allocationPercentage;
+<<<<<<< HEAD
 
     //     if ($newTotalAllocation > 100) {
     //         return redirect()->back()->withInput()->withErrors(['allocationpercentage' => 'Total allocation percentage for this user exceeds 100%.']);
     //     }
 
+=======
+    
+    //     if ($newTotalAllocation > 100) {
+    //         return redirect()->back()->withInput()->withErrors(['allocationpercentage' => 'Total allocation percentage for this user exceeds 100%.']);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Prepare data for updating
     //     $updateData = [
     //         'project_id' => $projectId,
@@ -280,16 +413,27 @@ class AddworkemployeeController extends Controller
     //         'startdate' => $request->input('startdate'),
     //         'enddate' => $request->input('enddate'),
     //     ];
+<<<<<<< HEAD
 
     //     // Update the existing record
     //     dd($updateData);
     //     $existingProject->update($updateData);
 
+=======
+    
+    //     // Update the existing record
+    //     $existingProject->update($updateData);
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Send notification email
     //     $project = AddProjects::find($projectId);
     //     $employee = employees::find($userId);
     //     Mail::to($employee->officialemail)->send(new UserAllocatedToProject($employee, $project, $allocationPercentage));
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     return redirect()->route('addWorksEmployee.id', ['id' => $projectId])->with('status', 'Employee Updated Successfully');
     // }
     // public function addworkesEmployeeUpdateStore(Request $request)
@@ -305,6 +449,7 @@ class AddworkemployeeController extends Controller
     //         'enddate' => 'required|date|after_or_equal:startdate',
     //         'employee_id' => 'required|exists:addworkes_employees,id' // ID for the record to update
     //     ]);
+<<<<<<< HEAD
 
     //     if ($validator->fails()) {
     //         return redirect()->back()->withInput()->withErrors($validator);
@@ -384,12 +529,20 @@ class AddworkemployeeController extends Controller
     //         return redirect()->back()->withInput()->withErrors($validator);
     //     }
 
+=======
+    
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withInput()->withErrors($validator);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     $employeeId = $request->input('employee_id'); // ID for the record to update
     //     $projectId = $request->input('projectId');
     //     $userId = $request->input('employee_Id');
     //     $allocationPercentage = $request->input('allocationpercentage');
     //     $startdate = $request->input('startdate');
     //     $enddate = $request->input('enddate');
+<<<<<<< HEAD
 
     //     // Check if the employee record to update exists
     //     $existingProject = AddworkesEmployee::find($employeeId);
@@ -398,27 +551,55 @@ class AddworkemployeeController extends Controller
     //         return redirect()->back()->with('status', 'Employee record not found.');
     //     }
 
+=======
+    
+    //     // Check if the employee record to update exists
+    //     $existingProject = AddworkesEmployee::find($employeeId);
+    //     if (!$existingProject) {
+    //         return redirect()->back()->with('status', 'Employee record not found.');
+    //     }
+    
+    //     // Get the old allocation percentage
+    //     $oldAllocationPercentage = $existingProject->allocationpercentage;
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Check for duplicate assignment
     //     $duplicateAssignment = AddworkesEmployee::where('employee_Id', $userId)
     //         ->where('project_id', $projectId)
     //         ->where('id', '!=', $employeeId) // Exclude current record from the check
     //         ->first();
+<<<<<<< HEAD
 
     //     if ($duplicateAssignment) {
     //         return redirect()->back()->withInput()->withErrors(['employee_Id' => 'This employee is already assigned to the selected project.']);
     //     }
 
+=======
+    
+    //     if ($duplicateAssignment) {
+    //         return redirect()->back()->withInput()->withErrors(['employee_Id' => 'This employee is already assigned to the selected project.']);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Check the total allocation percentage
     //     $currentAllocationPercentage = $existingProject->allocationpercentage;
     //     $totalAllocation = AddworkesEmployee::where('employee_Id', $userId)
     //         ->where('id', '!=', $employeeId) // Exclude current record from the check
     //         ->sum('allocationpercentage');
     //     $newTotalAllocation = $totalAllocation + $allocationPercentage - $currentAllocationPercentage;
+<<<<<<< HEAD
 
     //     if ($newTotalAllocation > 100) {
     //         return redirect()->back()->withInput()->withErrors(['allocationpercentage' => 'Total allocation percentage for this user exceeds 100%.']);
     //     }
 
+=======
+    
+    //     if ($newTotalAllocation > 100) {
+    //         return redirect()->back()->withInput()->withErrors(['allocationpercentage' => 'Total allocation percentage for this user exceeds 100%.']);
+    //     }
+    
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     //     // Prepare data for updating
     //     $updateData = [
     //         'project_id' => $projectId,
@@ -429,6 +610,7 @@ class AddworkemployeeController extends Controller
     //         'startdate' => $startdate,
     //         'enddate' => $enddate,
     //     ];
+<<<<<<< HEAD
 
     //     // Update the existing record
     //     $existingProject->update($updateData);
@@ -1114,6 +1296,26 @@ public function addworkesEmployeeUpdateStore(Request $request)
     $validator = Validator::make($request->all(), [
         'employee_Id' => 'required|exists:employees,id',
         'projectId' => 'required|exists:projects,id', // Ensure the project ID is validated
+=======
+    
+    //     // Update the existing record
+    //     $existingProject->update($updateData);
+    
+    //     // Send notification email with old allocation percentage
+    //     $project = AddProjects::find($projectId);
+    //     $employee = employees::find($userId);
+    
+    //     Mail::to($employee->officialemail)->send(new UserAllocatedChangeToProject($employee, $project, $allocationPercentage, $oldAllocationPercentage, $startdate, $enddate));
+    
+    //     return redirect()->route('addWorksEmployee.id', ['id' => $projectId])->with('status', 'Employee Updated Successfully');
+    // }
+    public function addworkesEmployeeUpdateStore(Request $request)
+{
+    // Validate the request inputs
+    $validator = Validator::make($request->all(), [
+        'employee_Id' => 'required|exists:employees,id',
+        // 'projectId' => 'required|exists:projects,id', // Ensure the project ID is validated
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         'userDepartment' => 'required|string',
         'userDesignation' => 'required|string',
         'allocationpercentage' => 'required|numeric|min:1|max:100',
@@ -1167,6 +1369,10 @@ public function addworkesEmployeeUpdateStore(Request $request)
         ->where('id', '!=', $employeeId) // Exclude current record from the check
         ->where('is_deleted', 0) // Ensure to consider only non-deleted records
         ->first();
+<<<<<<< HEAD
+=======
+        // dd($duplicateAssignment);
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     if ($duplicateAssignment) {
         return redirect()->back()->withInput()->withErrors(['employee_Id' => 'This employee is already assigned to the selected project.']);
@@ -1207,9 +1413,95 @@ public function addworkesEmployeeUpdateStore(Request $request)
 
     return redirect()->route('addWorksEmployee.id', ['id' => $projectId])->with('status', 'Employee Updated Successfully');
 }
+<<<<<<< HEAD
 
 
 public function addworkesEmployeeStore(Request $request)
+=======
+    //     public function addworkesEmployeeStore(Request $request)
+    // {
+    //     $employeeId = $request->input('employee_id');
+    //     $projectId = $request->input('projectId');
+    //     $userId = $request->input('employee_Id');
+    //     $allocationPercentage = $request->input('allocationpercentage');
+    
+    //     // Validate request inputs
+    //     $request->validate([
+    //         'employee_Id' => 'required|exists:employees,id',
+    //         'projectId' => 'required|exists:projects,id',
+    //         'userDepartment' => 'required|string',
+    //         'userDesignation' => 'required|string',
+    //         'allocationpercentage' => 'required|numeric|min:0|max:100',
+    //         'startdate' => 'required|date',
+    //         'enddate' => 'required|date|after_or_equal:startdate',
+    //     ]);
+    
+    //     // Check for duplicate entry
+    //     $existingEntry = AddworkesEmployee::where('employee_Id', $userId)
+    //         ->where('project_id', $projectId)
+    //         ->first();
+    
+    //     if ($existingEntry) {
+    //         $errorMessage = 'This employee is already assigned to the selected project.';
+    //         return redirect()->back()->withInput()->withErrors(['employee_Id' => $errorMessage]);
+    //     }
+    
+    //     $addworkesEmployee = [
+    //         'project_id' => $projectId,
+    //         'userDepartment' => $request->input('userDepartment'),
+    //         'userDesignation' => $request->input('userDesignation'),
+    //         'employee_Id' => $userId,
+    //         'allocationpercentage' => $allocationPercentage,
+    //         'status' => 1,
+    //         'startdate' => $request->input('startdate'),
+    //         'enddate' => $request->input('enddate'),
+    //     ];
+    
+    //     // Check if updating an existing record or creating a new one
+    //     if ($employeeId) {
+    //         $existingProject = AddworkesEmployee::find($employeeId);
+    
+    //         if ($existingProject) {
+    //             $totalAllocation = AddworkesEmployee::where('employee_Id', $userId)
+    //                 ->where('id', '!=', $employeeId)
+    //                 ->sum('allocationpercentage');
+    //             $newTotalAllocation = $totalAllocation + $allocationPercentage;
+    
+    //             if ($newTotalAllocation > 100) {
+    //                 $errorMessage = 'Total allocation percentage for this user exceeds 100%';
+    //                 return redirect()->back()->withInput()->withErrors(['allocationpercentage' => $errorMessage]);
+    //             }
+    
+    //             $existingProject->fill($addworkesEmployee)->save();
+    //             $project = AddProjects::find($projectId);
+    //             $employee = employees::where('id', $userId)->first();
+    //             Mail::to($employee->officialemail)->send(new UserAllocatedToProject($employee, $project, $allocationPercentage));
+    //             return redirect()->route('addWorksEmployee.id', ['id' => $projectId])->with('status', 'Employee Updated Successfully');
+    //         }
+    //     } else {
+    //         // Check total allocation for new record
+    //         $totalAllocation = AddworkesEmployee::where('employee_Id', $userId)->sum('allocationpercentage');
+    //         $newTotalAllocation = $totalAllocation + $allocationPercentage;
+    
+    //         if ($newTotalAllocation > 100) {
+    //             $errorMessage = 'Total allocation percentage for this user exceeds 100%';
+    //             return redirect()->back()->withInput()->withErrors(['allocationpercentage' => $errorMessage]);
+    //         }
+    
+    //         $project = AddworkesEmployee::create($addworkesEmployee);
+    
+    //         if ($project) {
+    //             $project = AddProjects::find($projectId);
+    //             $employee = employees::where('id', $userId)->first();
+    //             Mail::to($employee->officialemail)->send(new UserAllocatedToProject($employee, $project, $allocationPercentage));
+    //             return redirect()->back()->with('status', 'Employee Added Successfully');
+    //         } else {
+    //             return redirect()->back()->with('status', 'Failed to Create Employee');
+    //         }
+    //     }
+    // }
+    public function addworkesEmployeeStore(Request $request)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 {
     $employeeId = $request->input('employee_id');
     $projectId = $request->input('projectId');
@@ -1343,19 +1635,32 @@ public function addworkesEmployeeStore(Request $request)
         }
     }
 }
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     public function editEmployeeWork($id)
     {
         $modules = Session::get('user_modules_' . auth()->id());
         $employee = AddworkesEmployee::findOrFail($id);
+<<<<<<< HEAD
         if (Auth::user()->status == 0) {
             // dd($employee);
             return view('editEmployee', ['employee' => $employee], ['modules' => $modules]);
         } elseif (Auth::user()->status == 1) {
             return view('users.editEmployeeUser', ['employee' => $employee]);
+=======
+        if(Auth::user()->status == 0){
+            return view('editEmployee', ['employee' => $employee], ['modules' => $modules]);
+
+        }elseif(Auth::user()->status == 1){
+            return view('users.editEmployeeUser', ['employee' => $employee]);
+
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         }
     }
     public function fetchEmployeeName($employeeId)
@@ -1372,6 +1677,19 @@ public function addworkesEmployeeStore(Request $request)
         }
     }
 
+    // public function deleteEmployee($id)
+    // {
+    //     $employee = AddworkesEmployee::find($id);
+
+    //     if ($employee) {
+    //         $employee->delete();
+    //         Session::flash('success', 'Employee record deleted successfully.');
+    //     } else {
+    //         Session::flash('error', 'Failed to delete employee record.');
+    //     }
+
+    //     return redirect()->back();
+    // }
     public function deleteEmployee($id)
     {
         $employee = AddworkesEmployee::find($id);
@@ -1386,6 +1704,7 @@ public function addworkesEmployeeStore(Request $request)
 
         return redirect()->back();
     }
+<<<<<<< HEAD
     // public function checkAllocation(Request $request)
     // {
     //     // dd($request->all());
@@ -1414,6 +1733,36 @@ public function addworkesEmployeeStore(Request $request)
     //     ]);
     // }
     public function checkAllocation(Request $request)
+=======
+//     public function checkAllocation(Request $request)
+//     {
+//         // dd($request->all());
+//         $validatedData = $request->validate([
+//             'employee_id' => 'required|exists:addworkes_employees,employee_id',
+//             'allocation_percentage' => 'required|numeric|between:1,100',
+//         ]);
+
+//         $employeeId = $validatedData['employee_id'];
+//         $allocationPercentage = $validatedData['allocation_percentage'];
+
+//         $currentAllocation = AddworkesEmployee::where('employee_id', $employeeId)->sum('allocationpercentage');
+// // dd($currentAllocation);
+//         if ($currentAllocation + $allocationPercentage > 100) {
+//             // dd('hle');
+//             return response()->json([
+//                 'error' => true,
+//                 'message' => 'Total allocation percentage for this employee exceeds 100%.',
+//             ]);
+//         }
+
+//         return response()->json([
+          
+//             'error' => false,
+//             'message' => 'this user not allocation in Any projects.',
+//         ]);
+//     }
+public function checkAllocation(Request $request)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 {
     // Validate request inputs
     $validatedData = $request->validate([
@@ -1442,5 +1791,9 @@ public function addworkesEmployeeStore(Request $request)
         'message' => 'This user is not allocated to any projects or has sufficient allocation available.',
     ]);
 }
+<<<<<<< HEAD
+=======
+   
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 }

@@ -336,7 +336,11 @@
                 var formData = form.serialize();
     
                 $.ajax({
+<<<<<<< HEAD
                     url: '/reopen-timesheet', // Update this URL as necessary
+=======
+                    url: '/TMS/public/reopen-timesheet', // Update this URL as necessary
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                     type: 'POST',
                     data: formData,
                     success: function(response) {

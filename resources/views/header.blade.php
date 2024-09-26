@@ -14,6 +14,11 @@
 
     <title>@yield('title')</title>
 
+<<<<<<< HEAD
+=======
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -80,7 +85,10 @@
 
     <script src="{{ asset('/src/assets/js/allRolesDetails.js') }}"></script>
     <!-- Load jQuery first -->
+<<<<<<< HEAD
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     <!-- Then load Bootstrap's JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
@@ -88,8 +96,12 @@
     <!-- Or if using the non-bundled version -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     <style>
+
         select#currency option[value="AFN"] {
 
             background-image: url('afn.png');
@@ -103,6 +115,7 @@
             background-image: url('all.png');
 
         }
+
     </style>
 
 </head>
@@ -138,7 +151,9 @@
             <a href="javascript:void(0);" class="sidebarCollapse">
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+
                     class="feather feather-menu">
 
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -174,28 +189,43 @@
                     <div class="dropdown-menu position-absolute" aria-labelledby="language-dropdown">
 
                         <a class="dropdown-item d-flex" href="javascript:void(0);"><img
+
                                 src="https://designreset.com/equation/html/src/assets/img/1x1/us.svg"
+
                                 class="flag-width" alt="flag"> <span
+
                                 class="align-self-center">&nbsp;English</span></a>
 
                         <a class="dropdown-item d-flex" href="javascript:void(0);"><img
+
                                 src="https://designreset.com/equation/html/src/assets/img/1x1/tr.svg"
+
                                 class="flag-width" alt="flag"> <span
+
                                 class="align-self-center">&nbsp;Turkish</span></a>
 
                         <a class="dropdown-item d-flex" href="javascript:void(0);"><img
+
                                 src="https://designreset.com/equation/html/src/assets/img/1x1/br.svg"
+
                                 class="flag-width" alt="flag"> <span
+
                                 class="align-self-center">&nbsp;Portuguese</span></a>
 
                         <a class="dropdown-item d-flex" href="javascript:void(0);"><img
+
                                 src="https://designreset.com/equation/html/src/assets/img/1x1/in.svg"
+
                                 class="flag-width" alt="flag"> <span
+
                                 class="align-self-center">&nbsp;Hindi</span></a>
 
                         <a class="dropdown-item d-flex" href="javascript:void(0);"><img
+
                                 src="https://designreset.com/equation/html/src/assets/img/1x1/de.svg"
+
                                 class="flag-width" alt="flag"> <span
+
                                 class="align-self-center">&nbsp;German</span></a>
 
                     </div>
@@ -221,6 +251,7 @@
                 <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
 
                     <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown"
+
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
                         <div class="avatar-container">
@@ -228,6 +259,7 @@
                             <div class="avatar avatar-sm avatar-indicators avatar-online">
 
                                 <img alt="avatar" src="{{ asset('/src/assets/img/profile-21.jpg') }}"
+
                                     class="rounded-circle">
 
                             </div>
@@ -271,7 +303,9 @@
                             <a href="#">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
 
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -289,12 +323,15 @@
                             <a href="#">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox">
 
                                     <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
 
                                     <path
+
                                         d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z">
 
                                     </path>
@@ -310,7 +347,9 @@
                             <a href="#">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock">
 
                                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
@@ -330,7 +369,9 @@
                             <a href="#">
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+
                                     stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
 
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -375,7 +416,11 @@
 
             <nav id="sidebar">
 
+<<<<<<< HEAD
                 <!--<img src="{{ asset('src/assets/img/logo.png') }}" class="navbar-logo">-->
+=======
+<!--<img src="{{ asset('src/assets/img/logo.png') }}" class="navbar-logo">-->
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                 <div class="navbar-nav theme-brand flex-row  text-center">
 
@@ -383,35 +428,62 @@
 
                         <div class="nav-item theme-logo">
 
+<<<<<<< HEAD
 
+=======
+                            
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                             <!--<img src="images/logo.png" class="navbar-logo">-->
 
 
 
                             <a href="{{ route('dashboard') }}">
+<<<<<<< HEAD
 
 
 
 
+=======
+
+                              
+
+                              
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
 
                             </a>
 
+<<<<<<< HEAD
 
 
                             <img src="{{ asset('src/assets/img/logo.png') }}" alt="logo">
+=======
+                        
+
+                                <img src="{{ asset('src/assets/img/logo.png') }}"
+
+                                                alt="logo">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                         </div>
 
                         <div class="nav-item theme-text">
 
+<<<<<<< HEAD
 
 
                             <a href="{{ route('dashboard') }}" class="nav-link"> TechGropse </a>
 
 
+=======
+                             
+
+                            <a href="{{ route('dashboard') }}" class="nav-link"> TechGropse </a>
+
+                            
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                         </div>
 
@@ -422,7 +494,9 @@
                         <div class="btn-toggle sidebarCollapse">
 
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+
                                 stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-left">
 
                                 <polyline points="11 17 6 12 11 7"></polyline>
@@ -444,16 +518,25 @@
                 <ul class="list-unstyled menu-categories" id="accordionExample">
 
                     @foreach ($modules as $module)
+
                         @if (Auth::user()->status == '0')
+
                             <li class="menu {{ $_SERVER['REQUEST_URI'] == $module['url'] ? 'active' : '' }}">
 
+<<<<<<< HEAD
                                 <a href="{{ $module['url'] }}" aria-expanded="false" class="dropdown-toggle">
+=======
+                                <a href="/TMS/public{{ $module['url'] }}" aria-expanded="false" class="dropdown-toggle">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                     <div class="">
 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+
                                             class="feather feather-home">
 
                                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -469,20 +552,30 @@
                                 </a>
 
                             </li>
+
                         @else
+
                             <li
+
                                 class="menu {{ isset($module['rolePermission']) && $module['rolePermission'] === 1 ? '' : 'd-none' }}
 
                             {{ $_SERVER['REQUEST_URI'] == $module['url'] ? 'active' : '' }}">
 
+<<<<<<< HEAD
                                 <a href="/TMS/public{{ $module['url'] }}" aria-expanded="false"
                                     class="dropdown-toggle">
+=======
+                                <a href="/TMS/public{{ $module['url'] }}" aria-expanded="false" class="dropdown-toggle">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                     <div class="">
 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+
                                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+
                                             class="feather feather-home">
 
                                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -498,7 +591,9 @@
                                 </a>
 
                             </li>
+
                         @endif
+
                     @endforeach
 
                 </ul>
@@ -532,6 +627,7 @@
     </div>
 
     <script>
+
         $(document).ready(function() {
 
             $('#importCSVModal').on('shown.bs.modal', function() {
@@ -541,10 +637,16 @@
             });
 
         });
+
     </script>
 
 </body>
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 </html>
+

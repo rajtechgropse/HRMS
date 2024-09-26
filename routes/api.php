@@ -19,5 +19,9 @@ use App\Http\Controllers\Api\ApiController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+<<<<<<< HEAD
 Route::get('/test', [ApiController::class, 'test'])->name('test');
+=======
+Route::get('/user-details', [ApiController::class, 'getUserDetails']);
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 

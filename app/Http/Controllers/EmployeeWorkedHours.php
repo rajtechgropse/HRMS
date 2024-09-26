@@ -35,24 +35,69 @@ class EmployeeWorkedHours extends Controller
     }
 
 
+    // public function employeHours($id)
+    // {
+    //     $modules = Session::get('user_modules_' . auth()->id());
+    //     $projectId = $id;
+    //     $timeEntries = TimeEntry::where('project_id', $projectId)->where('status',1)->with('employee', 'addworkesEmployees')->get()->toArray();
+    //     $employeeTotalHours = [];
+    //     foreach ($timeEntries as $timeEntry) {
+    //         $employeeId = $timeEntry['employee']['id'];
+    //         $employeeName = $timeEntry['employee']['name'];
+    //         $totalHours = $timeEntry['total_hours'];
+
+    //         $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
+    //             return $allocation['employee_Id'] == $employeeId;
+    //         });
+    //         // dd($relevantEmployeeAllocation);
+
+    //         $employeeAllcationStartDate = reset($relevantEmployeeAllocation)['startdate'];
+    //         $employeeAllcationEndDate = reset($relevantEmployeeAllocation)['enddate'];
+
+    //         if (isset($employeeTotalHours[$employeeId])) {
+    //             $employeeTotalHours[$employeeId]['total_hours'] += $totalHours;
+    //         } else {
+    //             $employeeTotalHours[$employeeId] = [
+    //                 'name' => $employeeName,
+    //                 'total_hours' => $totalHours,
+    //                 'startDate' => $employeeAllcationStartDate,
+    //                 'endDate' => $employeeAllcationEndDate,
+    //                 'employeeIds' => $employeeId,
+    //                 'projectIds' => $projectId,
+    //             ];
+    //         }
+    //     }
+    //     // dd($employeeTotalHours);
+    //     return view('employee_submited_hours', compact('modules', 'employeeTotalHours'));
+    // }
     public function employeHours($id)
     {
         $modules = Session::get('user_modules_' . auth()->id());
         $projectId = $id;
         $timeEntries = TimeEntry::where('project_id', $projectId)->where('status',1)->with('employee', 'addworkesEmployees')->get()->toArray();
         $employeeTotalHours = [];
+    
         foreach ($timeEntries as $timeEntry) {
             $employeeId = $timeEntry['employee']['id'];
             $employeeName = $timeEntry['employee']['name'];
             $totalHours = $timeEntry['total_hours'];
-
+    
+            // Filter relevant allocations
             $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
                 return $allocation['employee_Id'] == $employeeId;
             });
-
-            $employeeAllcationStartDate = reset($relevantEmployeeAllocation)['startdate'];
-            $employeeAllcationEndDate = reset($relevantEmployeeAllocation)['enddate'];
-
+    
+            // Check if $relevantEmployeeAllocation is not empty and is an array
+            if (!empty($relevantEmployeeAllocation) && is_array($relevantEmployeeAllocation)) {
+                $relevantEmployeeAllocation = reset($relevantEmployeeAllocation);
+                $employeeAllcationStartDate = $relevantEmployeeAllocation['startdate'] ?? null;
+                $employeeAllcationEndDate = $relevantEmployeeAllocation['enddate'] ?? null;
+            } else {
+                // Handle case where no allocation is found
+                $employeeAllcationStartDate = null;
+                $employeeAllcationEndDate = null;
+            }
+    
             if (isset($employeeTotalHours[$employeeId])) {
                 $employeeTotalHours[$employeeId]['total_hours'] += $totalHours;
             } else {
@@ -66,9 +111,10 @@ class EmployeeWorkedHours extends Controller
                 ];
             }
         }
-        // dd($employeeTotalHours);
+    
         return view('employee_submited_hours', compact('modules', 'employeeTotalHours'));
     }
+    
 
 
     public function AllProjectedFetch()
@@ -110,6 +156,7 @@ class EmployeeWorkedHours extends Controller
                 ];
             }
         }
+        // dd($projectHours);
 
         return view('AllProjectsFetch', compact('modules', 'projectHours', 'allProjects'));
     }

@@ -20,13 +20,23 @@
                                 <div class="col-md-5 col-12 mt-4 mt-md-0">
                                     <div class="">
                                         <label for="start_date" class="fs-6 fw-light mb-1">Start Date</label>
+<<<<<<< HEAD
                                         <input type="date" id="start_date" name="start_date" class="form-control" required>
+=======
+                                        <input type="date" id="start_date" name="start_date" class="form-control"
+                                            required>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     </div>
                                 </div>
                                 <div class="col-md-5 col-12 mt-4 mt-md-0">
                                     <div class="">
                                         <label for="end_date" class="fs-6 fw-light mb-1">End Date</label>
+<<<<<<< HEAD
                                         <input type="date" id="end_date" name="end_date" class="form-control" required>
+=======
+                                        <input type="date" id="end_date" name="end_date" class="form-control"
+                                            required>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     </div>
                                 </div>
                                 <div class="col-md-2 col-12">
@@ -51,10 +61,18 @@
                                 <div class="d-flex align-items-baseline gap-2">
                                     <p class="value mb-0 mt-0 p-0">
                                         <a href="{{ route('approvedData') }}" id="approvedCountLink">
+<<<<<<< HEAD
                                             <span class="text-warning fs-4 fw-semibold" id="approvedCount">{{ $approvedCount }}</span>
                                         </a>
                                     </p>
                                     @if($approvedCount <= 10)
+=======
+                                            <span class="text-warning fs-4 fw-semibold"
+                                                id="approvedCount">{{ $approvedCount }}</span>
+                                        </a>
+                                    </p>
+                                    @if ($approvedCount <= 10)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         <i class="fa-solid fa-arrow-trend-down fs-5 fw-semibold text-danger"></i>
                                         @else
                                         <i class="fa-solid fa-arrow-trend-up fs-5 fw-semibold text-success"></i>
@@ -64,8 +82,14 @@
                         </div>
                         <div class="w-progress-stats mt-1">
                             <div class="progress">
+<<<<<<< HEAD
                                 <div class="progress-bar bg-gradient-secondary" role="progressbar" style="width: {{ $approvedCount }}%"
                                     aria-valuenow="57" aria-valuemin="0" aria-valuemax="100"></div>
+=======
+                                <div class="progress-bar bg-gradient-secondary" role="progressbar"
+                                    style="width: {{ $approvedCount }}%" aria-valuenow="57" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                             </div>
                         </div>
                     </div>
@@ -84,10 +108,18 @@
                                 <div class="d-flex align-items-baseline gap-2">
                                     <p class="value mb-0 mt-0 p-0">
                                         <a href="{{ route('pendingData') }}" id="pendingCount">
+<<<<<<< HEAD
                                             <span class="text-warning fs-4 fw-semibold" id="pendingCount">{{ $pendingCount }}</span>
                                         </a>
                                     </p>
                                     @if($pendingCount <= 10)
+=======
+                                            <span class="text-warning fs-4 fw-semibold"
+                                                id="pendingCount">{{ $pendingCount }}</span>
+                                        </a>
+                                    </p>
+                                    @if ($pendingCount <= 10)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         <i class="fa-solid fa-arrow-trend-down fs-5 fw-semibold text-danger"></i>
                                         @else
                                         <i class="fa-solid fa-arrow-trend-up fs-5 fw-semibold text-success"></i>
@@ -97,8 +129,14 @@
                         </div>
                         <div class="w-progress-stats mt-1">
                             <div class="progress">
+<<<<<<< HEAD
                                 <div class="progress-bar bg-gradient-secondary" role="progressbar" style="width: {{ $pendingCount }}%"
                                     aria-valuenow="57" aria-valuemin="0" aria-valuemax="100"></div>
+=======
+                                <div class="progress-bar bg-gradient-secondary" role="progressbar"
+                                    style="width: {{ $pendingCount }}%" aria-valuenow="57" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                             </div>
                         </div>
                     </div>
@@ -117,10 +155,18 @@
                                 <div class="d-flex align-items-baseline gap-2">
                                     <p class="value mb-0 mt-0 p-0">
                                         <a href="{{ route('rejectedData') }}" id="rejectedCount">
+<<<<<<< HEAD
                                             <span class="text-warning fs-4 fw-semibold" id="rejectedCount">{{ $rejectedCount }}</span>
                                         </a>
                                     </p>
                                     @if($rejectedCount <= 10)
+=======
+                                            <span class="text-warning fs-4 fw-semibold"
+                                                id="rejectedCount">{{ $rejectedCount }}</span>
+                                        </a>
+                                    </p>
+                                    @if ($rejectedCount <= 10)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         <i class="fa-solid fa-arrow-trend-down fs-5 fw-semibold text-danger"></i>
                                         @else
                                         <i class="fa-solid fa-arrow-trend-up fs-5 fw-semibold text-success"></i>
@@ -130,8 +176,14 @@
                         </div>
                         <div class="w-progress-stats mt-1">
                             <div class="progress">
+<<<<<<< HEAD
                                 <div class="progress-bar bg-gradient-secondary" role="progressbar" style="width: {{ $rejectedCount }}%"
                                     aria-valuenow="57" aria-valuemin="0" aria-valuemax="100"></div>
+=======
+                                <div class="progress-bar bg-gradient-secondary" role="progressbar"
+                                    style="width: {{ $rejectedCount }}%" aria-valuenow="57" aria-valuemin="0"
+                                    aria-valuemax="100"></div>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                             </div>
                         </div>
                     </div>
@@ -150,7 +202,11 @@
                                 <div class="d-flex align-items-baseline gap-2">
                                     <p class="value mb-0 mt-0 p-0">
                                         <a href="{{ route('nonAllocationUser') }}" id="nonAllocationUser">
+<<<<<<< HEAD
                                             <span class="text-warning fs-4 fw-semibold" id="nonAllocationUser">{{ $employeesWithoutAddWorkRecordsDetailsCount }}</span>
+=======
+                                            <span class="text-warning fs-4 fw-semibold" id="rejectedCount">{{ $employeesWithoutAddWorkRecordsDetailsCount }}</span>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         </a>
                                     </p>
                                     @if($employeesWithoutAddWorkRecordsDetailsCount <= 10)
@@ -203,6 +259,7 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
             <!-- <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 layout-spacing">
                 <div class="widget widget-card-four shadow-custom">
                     <div class="widget-content">
@@ -233,6 +290,8 @@
                         aria-valuenow="57" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div> -->
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12 layout-spacing">
                 <div class="widget widget-card-four shadow-custom">
                     <div class="widget-content">
@@ -270,10 +329,13 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 </div>
 </div>
 </div>
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 <script>
     $(document).ready(function() {
         $('#fetchDataForm').submit(function(event) {
@@ -290,8 +352,11 @@
                     $('#approvedCount').text(response.approvedCount);
                     $('#pendingCount').text(response.pendingCount);
                     $('#rejectedCount').text(response.rejectedCount);
+<<<<<<< HEAD
                     $('#nonAllocationUser').text(response.employeesWithoutAddWorkRecordsCount);
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);

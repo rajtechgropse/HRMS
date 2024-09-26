@@ -1,0 +1,14 @@
+/* Adjustments for better alignment */
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.input-group-text {
+    width: 50px; /* Adjust the width as needed */
+}
+
+.form-control {
+    width: calc(100% - 50px); /* Adjust the width to match the input and icon */
+    border-radius: 0 4px 4px 0; /* Match the input border-radius */
+}
