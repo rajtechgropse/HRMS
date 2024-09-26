@@ -19,6 +19,13 @@ return new class extends Migration
             $table->string('name');
             $table->time('hours');
             $table->date('StartDate');
+            $table->tinyInteger('is_complete')->NULL();
+            $table->text('remarks')->NULL();
+            $table->text('qa_signed')->NULL();
+            $table->text('client_signed')->NULL();
+
+            
+            
 
             $table->string('targetComplectionDate');
             $table->string('description');

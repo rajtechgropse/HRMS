@@ -9,14 +9,51 @@ class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
+     *
+     * @param \Illuminate\Console\Scheduling\Schedule $schedule
+     * @return void
      */
-    protected function schedule(Schedule $schedule): void
-    {
-        // $schedule->command('inspire')->hourly();
-    }
+    protected $commands = [
+        \App\Console\Commands\SendPendingTimesheets::class,
+        \App\Console\Commands\UpdateExpiredAllocations::class, // Add this line
 
+    ];
+    
+    // protected function schedule(Schedule $schedule)
+    // {
+    //     // Schedule the command to run every Monday at 8:00 AM
+    //     $schedule->command('email:send-pending-timesheets')->everymintue();
+    // }\
+//     protected function schedule(Schedule $schedule)
+// {
+//     // Schedule the command to run every Wednesday at 12:30 PM
+//     // $schedule->command('email:send-pending-timesheets')->everyMinute()->timezone('UTC');
+//     $schedule->command('email:send-pending-timesheets')
+//          ->dailyAt('02:05')
+//          ->timezone('EDT');
+
+    
+// }
+// protected function schedule(Schedule $schedule)
+// {
+//     $schedule->command('email:send-pending-timesheets')->dailyAt(4,'14:40');
+// }
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('email:send-pending-timesheets')->weekly()->fridays()->at('01:20');
+    
+    $schedule->command('allocations:update-expired')->daily();
+
+
+
+}
+
+    
+    
     /**
      * Register the commands for the application.
+     *
+     * @return void
      */
     protected function commands(): void
     {

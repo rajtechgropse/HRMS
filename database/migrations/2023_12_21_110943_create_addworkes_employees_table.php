@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->integer('project_id');
             $table->integer('userDepartment');
-
+            $table->tinyInteger('status');
             $table->string('userDesignation');
             $table->integer('userId');
             $table->integer('allocationpercentage');
+            $table->tinyInteger('is_deleted');
+
             $table->date('startdate');
             $table->date('enddate');
             $table->timestamps();

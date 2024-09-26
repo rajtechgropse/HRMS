@@ -5,67 +5,224 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\AddworkesEmployee;
 use App\Models\TimeEntry;
 use App\Models\TimeEntriesTemp;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use App\Models\addworkesEmployee;
+use App\Models\employees;
+use App\Models\AddProjects;
+use App\Models\ReopenTimesheet;
+
+
+
+
+
+
 
 
 use Illuminate\Support\Facades\Session;
 
 class TimesheetController extends Controller
 {
+
+    // public function Timesheet()
+    // {
+    //     $userLoginDetails = Auth::user()->employee_Id;
+
+    //     $assignedProjects = addworkesEmployee::where('employee_Id', $userLoginDetails)
+    //         ->with('project')
+    //         ->get();
+    //     $permissionTimesheet = Auth::user()->time_managers_status;
+    //     // $user = Auth::user()->employee_Id;
+
+    //     // Check if the user is either an admin or a project manager
+    //     $reopenTimesheetDates = TimeEntry::where('employee_id', $userLoginDetails)
+    //         ->whereIn('status', [3])
+    //         ->where(function ($query) {
+    //             $query->where('is_admin', 1)
+    //                 ->orWhere('is_ProjectManagers', 1);
+    //         })
+    //         ->pluck('date');
+
+    //     dd($reopenTimesheetDates);
+
+    //     if ($assignedProjects->isEmpty()) {
+    //         return view('users.time_Sheet', compact('assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
+    //     }
+
+    //     $projectStartDates = $assignedProjects->pluck('startdate')->toArray();
+    //     $projectEndDates = $assignedProjects->pluck('enddate')->toArray();
+
+    //     $minDate = min($projectStartDates);
+    //     $maxDate = max($projectEndDates);
+
+
+    //     return view('users.time_Sheet', compact('minDate', 'maxDate', 'assignedProjects', 'permissionTimesheet'));
+    // }
     public function Timesheet()
     {
         $userLoginDetails = Auth::user()->employee_Id;
-        $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
+    
+        $assignedProjects = addworkesEmployee::where('employee_Id', $userLoginDetails)
+            ->where('is_deleted', 0)
             ->with('project')
             ->get();
+            
+        $permissionTimesheet = Auth::user()->time_managers_status;
+    
+        // Get the reopen timesheet dates
+        $reopenTimesheetDates = TimeEntry::where('employee_id', $userLoginDetails)
+            ->whereIn('status', [2])
+            ->where(function ($query) {
+                $query->where('is_admin', 1)
+                    ->orWhere('is_ProjectManagers', 1);
+            })
+            ->pluck('date')
+            ->map(function ($date) {
+                return \Carbon\Carbon::parse($date)->toDateString();
+            });
+    
+        // Check if assignedProjects is empty and return view with the necessary variables
+        if ($assignedProjects->isEmpty()) {
+            return view('users.time_Sheet', compact('assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
+        }
+        // dd($reopenTimesheetDates);
+
+        if (!$reopenTimesheetDates->isEmpty()){
+            // dd($reopenTimesheetDates);
+            return view('users.time_Sheet', compact('assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
 
 
+        }
+    
         $projectStartDates = $assignedProjects->pluck('startdate')->toArray();
         $projectEndDates = $assignedProjects->pluck('enddate')->toArray();
-
+    
         $minDate = min($projectStartDates);
         $maxDate = max($projectEndDates);
-
-        return view('users.time_Sheet', compact('minDate', 'maxDate'));
+    
+        return view('users.time_Sheet', compact('minDate', 'maxDate', 'assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
     }
+    
+    // public function Timesheet()
+    // {
+    //     $userLoginDetails = Auth::user()->employee_Id;
+        
+    //     // Fetch assigned projects
+    //     $assignedProjects = addworkesEmployee::where('employee_Id', $userLoginDetails)
+    //         ->with('project')
+    //         ->get();
+            
+    //     // Get permission status
+    //     $permissionTimesheet = Auth::user()->time_managers_status;
+        
+    //     // Get the reopen timesheet dates
+    //     $reopenTimesheetDates = TimeEntry::where('employee_id', $userLoginDetails)
+    //         ->whereIn('status', [3])
+    //         ->where(function ($query) {
+    //             $query->where('is_admin', 1)
+    //                 ->orWhere('is_ProjectManagers', 1);
+    //         })
+    //         ->pluck('date')
+    //         ->map(function ($date) {
+    //             return \Carbon\Carbon::parse($date)->toDateString();
+    //         })
+    //         ->toArray(); // Convert to array to pass to view
+        
+    //     // Check if assignedProjects is empty and return view with the necessary variables
+    //     if ($assignedProjects->isEmpty()) {
+    //         return view('users.time_Sheet', compact('assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
+    //     }
+    
+    //     // If reopen timesheet dates are available, return the view with these dates
+    //     if (!empty($reopenTimesheetDates)) {
+    //         return view('users.time_Sheet', compact('assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
+    //     }
+    
+    //     // Calculate project date ranges
+    //     $projectStartDates = $assignedProjects->pluck('startdate')->toArray();
+    //     $projectEndDates = $assignedProjects->pluck('enddate')->toArray();
+        
+    //     $minDate = min($projectStartDates);
+    //     $maxDate = max($projectEndDates);
+        
+    //     return view('users.time_Sheet', compact('minDate', 'maxDate', 'assignedProjects', 'permissionTimesheet', 'reopenTimesheetDates'));
+    // }
+    
+
 
     public function enterDateInProject(Request $request)
     {
+
         $userLoginDetails = Auth::user()->employee_Id;
         $selectedDate = $request->input('week_start_date');
 
-        $existingEntry = TimeEntry::where('employee_id', $userLoginDetails)
+        $query = TimeEntry::where('employee_id', $userLoginDetails)
             ->where('date', $selectedDate)
-            ->where('status', 1)
-            ->get();
+            ->whereIn('status', [1, 2]);
+
+        \Log::info($query->toSql(), $query->getBindings());
+
+        $existingEntry = $query->get();
+
 
         if ($existingEntry->isNotEmpty()) {
             $projects = $this->getProjects();
             $datesAndDays = $this->setupDatesAndDays($selectedDate);
             $weekDates = Session::get('week_dates');
-
             return view('users.submite_Data_View', compact('projects', 'datesAndDays', 'weekDates', 'existingEntry'));
         } else {
             $timeEntries = TimeEntriesTemp::where('date', $selectedDate)
                 ->where('employee_id', $userLoginDetails)
                 ->get()->toArray();
 
+            $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
+                ->with('project')
+                ->get();
+
             $projects = $this->getProjects();
             $datesAndDays = $this->setupDatesAndDays($selectedDate);
             $weekDates = Session::get('week_dates');
+            $totalTime = [
+                'monday_hours' => 0,
+                'tuesday_hours' => 0,
+                'wednesday_hours' => 0,
+                'thursday_hours' => 0,
+                'friday_hours' => 0,
+                'saturday_hours' => 0,
+                'sunday_hours' => 0
+            ];
 
-            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
+            for ($i = 0; $i < count($timeEntries); $i++) {
+                $totalTime['monday_hours'] += $timeEntries[$i]['monday_hours'];
+                $totalTime['tuesday_hours'] += $timeEntries[$i]['tuesday_hours'];
+                $totalTime['wednesday_hours'] += $timeEntries[$i]['wednesday_hours'];
+                $totalTime['thursday_hours'] += $timeEntries[$i]['thursday_hours'];
+                $totalTime['friday_hours'] += $timeEntries[$i]['friday_hours'];
+                $totalTime['saturday_hours'] += $timeEntries[$i]['saturday_hours'];
+                $totalTime['sunday_hours'] += $timeEntries[$i]['sunday_hours'];
+            }
+
+            $totalTime = [
+                'monday_hours' => number_format($totalTime['monday_hours'], 2),
+                'tuesday_hours' => number_format($totalTime['tuesday_hours'], 2),
+                'wednesday_hours' => number_format($totalTime['wednesday_hours'], 2),
+                'thursday_hours' => number_format($totalTime['thursday_hours'], 2),
+                'friday_hours' => number_format($totalTime['friday_hours'], 2),
+                'saturday_hours' => number_format($totalTime['saturday_hours'], 2),
+                'sunday_hours' => number_format($totalTime['sunday_hours'], 2)
+            ];
+
+            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries', 'assignedProjects', 'totalTime'));
         }
     }
+
 
     private function getProjects()
     {
         $userLoginDetails = Auth::user()->employee_Id;
-        $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
+        $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)->where('is_deleted',0)
             ->with('project')
             ->get();
 
@@ -84,7 +241,9 @@ class TimesheetController extends Controller
 
     private function setupDatesAndDays($selectedDate)
     {
-        $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
+        // $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
+        $startDate = Carbon::parse($selectedDate);
+
         $datesAndDays = [];
 
         $datesAndDays[] = [
@@ -119,6 +278,9 @@ class TimesheetController extends Controller
         $userLoginDetails = Auth::user()->employee_Id;
         $selectedDate = $request->input('selected_date');
         $startDate = Carbon::createFromFormat('Y-m-d', $selectedDate);
+        $assignedProjects = AddworkesEmployee::where('employee_Id', $userLoginDetails)
+            ->with('project')
+            ->get();
 
         $existingEntry = TimeEntry::where('employee_id', $userLoginDetails)
             ->where('date', $selectedDate)
@@ -197,7 +359,39 @@ class TimesheetController extends Controller
                 $projectIds[] = $projectId;
             }
             $projects = array_combine($projectIds, $projectNames);
-            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries'));
+            $projects = $this->getProjects();
+            $datesAndDays = $this->setupDatesAndDays($selectedDate);
+            $weekDates = Session::get('week_dates');
+            $totalTime = [
+                'monday_hours' => 0,
+                'tuesday_hours' => 0,
+                'wednesday_hours' => 0,
+                'thursday_hours' => 0,
+                'friday_hours' => 0,
+                'saturday_hours' => 0,
+                'sunday_hours' => 0
+            ];
+
+            for ($i = 0; $i < count($timeEntries); $i++) {
+                $totalTime['monday_hours'] += $timeEntries[$i]['monday_hours'];
+                $totalTime['tuesday_hours'] += $timeEntries[$i]['tuesday_hours'];
+                $totalTime['wednesday_hours'] += $timeEntries[$i]['wednesday_hours'];
+                $totalTime['thursday_hours'] += $timeEntries[$i]['thursday_hours'];
+                $totalTime['friday_hours'] += $timeEntries[$i]['friday_hours'];
+                $totalTime['saturday_hours'] += $timeEntries[$i]['saturday_hours'];
+                $totalTime['sunday_hours'] += $timeEntries[$i]['sunday_hours'];
+            }
+
+            $totalTime = [
+                'monday_hours' => number_format($totalTime['monday_hours'], 2),
+                'tuesday_hours' => number_format($totalTime['tuesday_hours'], 2),
+                'wednesday_hours' => number_format($totalTime['wednesday_hours'], 2),
+                'thursday_hours' => number_format($totalTime['thursday_hours'], 2),
+                'friday_hours' => number_format($totalTime['friday_hours'], 2),
+                'saturday_hours' => number_format($totalTime['saturday_hours'], 2),
+                'sunday_hours' => number_format($totalTime['sunday_hours'], 2)
+            ];
+            return view('users.enterTimetheProject', compact('projects', 'datesAndDays', 'weekDates', 'timeEntries', 'totalTime', 'assignedProjects'));
         }
     }
     public function enterDateInProjectTempSave(Request $request)
@@ -216,6 +410,8 @@ class TimesheetController extends Controller
             $wednesdayHours = $request->input('wednesday')[$index] ?? '0';
             $thursdayHours = $request->input('thursday')[$index] ?? '0';
             $fridayHours = $request->input('friday')[$index] ?? '0';
+            $saturdayHours = $request->input('saturday')[$index] ?? '0';
+
             $totalHours = $request->input('total_Hours')[$index] ?? '0';
             $descriptions = $request->input('description')[$index];
 
@@ -234,6 +430,8 @@ class TimesheetController extends Controller
                     $existingEntry->wednesday_hours = $wednesdayHours;
                     $existingEntry->thursday_hours = $thursdayHours;
                     $existingEntry->friday_hours = $fridayHours;
+                    $existingEntry->saturday_hours = $saturdayHours;
+
                     $existingEntry->total_hours = $totalHours;
                     $existingEntry->descriptions = $descriptions;
                     $existingEntry->save();
@@ -250,6 +448,8 @@ class TimesheetController extends Controller
                 $newEntry->wednesday_hours = $wednesdayHours;
                 $newEntry->thursday_hours = $thursdayHours;
                 $newEntry->friday_hours = $fridayHours;
+                $newEntry->saturday_hours = $saturdayHours;
+
                 $newEntry->total_hours = $totalHours;
                 $newEntry->descriptions = $descriptions;
                 $newEntry->save();
@@ -259,8 +459,74 @@ class TimesheetController extends Controller
         return redirect()->route('user.timeSheet')->with('status', 'Timesheet Saved Successfully');
     }
 
+
+    public function enterTimeInProjectUpdateRejected(Request $request)
+    {
+        $projectIds = $request->input('selected_project_id');
+        $selectedDate = $request->input('selected_date');
+        $timeEntryIds = $request->input('selected_id'); // IDs of the entries to update
+
+        if (count($timeEntryIds) !== count($projectIds)) {
+            return redirect()->route('user.timeSheet')->with('error', 'Mismatch between project IDs and time entry IDs.');
+        }
+
+        foreach ($timeEntryIds as $index => $timeEntryId) {
+            $timeEntry = TimeEntry::find($timeEntryId);
+
+            if ($timeEntry) {
+                $date = Carbon::createFromFormat('Y-m-d', $selectedDate)->toDateString();
+                $day = Carbon::createFromFormat('Y-m-d', $selectedDate)->format('l');
+                $mondayHours = $request->input('monday_hours')[$index] ?? '0';
+                $tuesdayHours = $request->input('tuesday_hours')[$index] ?? '0';
+                $wednesdayHours = $request->input('wednesday_hours')[$index] ?? '0';
+                $thursdayHours = $request->input('thursday_hours')[$index] ?? '0';
+                $fridayHours = $request->input('friday_hours')[$index] ?? '0';
+                $saturdayHours = $request->input('saturday_hours')[$index] ?? '0';
+                $sundayHours = $request->input('sunday_hours')[$index] ?? '0'; // Added Sunday hours
+                $totalHours = $request->input('total_hours')[$index] ?? '0';
+                $descriptions = $request->input('description')[$index] ?? '0';
+
+                $timeEntry->project_id = $projectIds[$index];
+                $timeEntry->employee_id = Auth::user()->employee_Id;
+                $timeEntry->date = $date;
+                $timeEntry->day = $day;
+                $timeEntry->monday_hours = $mondayHours;
+                $timeEntry->tuesday_hours = $tuesdayHours;
+                $timeEntry->wednesday_hours = $wednesdayHours;
+                $timeEntry->thursday_hours = $thursdayHours;
+                $timeEntry->friday_hours = $fridayHours;
+                $timeEntry->saturday_hours = $saturdayHours;
+                $timeEntry->sunday_hours = $sundayHours; // Set Sunday hours
+                $timeEntry->total_hours = $totalHours;
+                $timeEntry->descriptions = $descriptions;
+                $timeEntry->status = 0; // Assuming status needs to be set to 0
+
+                $timeEntry->save();
+            } else {
+                return redirect()->route('user.timeSheet')->with('error', 'Time entry not found for ID: ' . $timeEntryId);
+            }
+        }
+
+        return redirect()->route('user.timeSheet')->with('status', 'Timesheet Updated Successfully');
+    }
+
+
+
     public function EnterTimeInProject(Request $request)
     {
+
+        $request->validate([
+            'selected_project_id' => 'required|array',
+            'selected_date' => 'required|date',
+            'monday.*' => 'required|numeric',
+            'tuesday.*' => 'required|numeric',
+            'wednesday.*' => 'required|numeric',
+            'thursday.*' => 'required|numeric',
+            'friday.*' => 'required|numeric',
+            'total_Hours.*' => 'required|numeric',
+            'description.*' => 'nullable|string',
+        ]);
+
         $projectIds = $request->input('selected_project_id');
         $selectedDate = $request->input('selected_date');
 
@@ -268,13 +534,31 @@ class TimesheetController extends Controller
             $date = Carbon::createFromFormat('Y-m-d', $selectedDate)->toDateString();
             $day = Carbon::createFromFormat('Y-m-d', $selectedDate)->format('l');
 
-            $mondayHours = $request->input('monday')[$index];
-            $tuesdayHours = $request->input('tuesday')[$index];
-            $wednesdayHours = $request->input('wednesday')[$index];
-            $thursdayHours = $request->input('thursday')[$index];
-            $fridayHours = $request->input('friday')[$index];
-            $totalHours = $request->input('total_Hours')[$index];
-            $descriptions = $request->input('description')[$index];
+            $existingEntry = TimeEntry::where('project_id', $projectId)
+                ->where('employee_id', Auth::user()->employee_Id)
+                ->where('date', $date)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($existingEntry) {
+                if ($existingEntry->status == 0 && 3) {
+                    dd($existingEntry->status);
+                    return redirect()->route('user.timeSheet')->with('error', 'Timesheet already submitted for this date. Please wait for it to be approved or rejected before submitting again.');
+                } elseif ($existingEntry->status == 1) {
+                    return redirect()->route('user.timeSheet')->with('error', 'Timesheet has already been approved for this date.');
+                } elseif ($existingEntry->status == 3) {
+                    // dd('reopen');
+                    return redirect()->route('user.timeSheet')->with('error', 'Timesheet has already Requested for Reopen.');
+                }
+            }
+
+            $mondayHours = $request->input('monday')[$index] ?? '0';
+            $tuesdayHours = $request->input('tuesday')[$index] ?? '0';
+            $wednesdayHours = $request->input('wednesday')[$index] ?? '0';
+            $thursdayHours = $request->input('thursday')[$index] ?? '0';
+            $fridayHours = $request->input('friday')[$index] ?? '0';
+            $totalHours = $request->input('total_Hours')[$index] ?? '0';
+            $descriptions = $request->input('description')[$index] ?? '0';
             $saturdayHours = $request->input('saturday')[$index] ?? '0';
             // $sundayHours = $request->input('sunday')[$index];
 
@@ -288,12 +572,12 @@ class TimesheetController extends Controller
             $timeEntry->wednesday_hours = $wednesdayHours;
             $timeEntry->thursday_hours = $thursdayHours;
             $timeEntry->friday_hours = $fridayHours;
-            $timeEntry->total_hours = $totalHours;
-            $timeEntry->descriptions = $descriptions;
-
             $timeEntry->saturday_hours = $saturdayHours;
             // $timeEntry->sunday_hours = $sundayHours;
-            $timeEntry->status = 1;
+
+            $timeEntry->total_hours = $totalHours;
+            $timeEntry->descriptions = $descriptions;
+            $timeEntry->status = 0;
 
             $timeEntry->save();
         }
@@ -312,13 +596,235 @@ class TimesheetController extends Controller
     }
 
 
+
     public function submitedTimesheet()
     {
         $userLoginDetails = Auth::user()->employee_Id;
+
         $submitedProjects = TimeEntry::where('employee_Id', $userLoginDetails)
             ->with('project')
+            ->orderBy('date', 'desc')
             ->paginate(10);
+        $timeEntries = TimeEntry::where('employee_Id', $userLoginDetails)
+            ->with(['employee', 'addworkesEmployees' => function ($query) use ($userLoginDetails) {
+                $query->where('employee_Id', $userLoginDetails);
+            }])
+            ->get();
 
-        return view('users.submited_timesheet', ['submitedProjects' => $submitedProjects]);
+        $employeeTotalHours = [];
+
+        foreach ($timeEntries as $timeEntry) {
+            $employeeId = $timeEntry->employee->id;
+            $employeeName = $timeEntry->employee->name;
+            $employeeEmail = $timeEntry->employee->officialemail;
+            $totalHours = $timeEntry->total_hours;
+            $relevantEmployeeAllocation = $timeEntry->addworkesEmployees->first();
+            $employeeAllocationStartDate = $relevantEmployeeAllocation->startdate;
+            $employeeAllocationEndDate = $relevantEmployeeAllocation->enddate;
+            $startDate = strtotime($employeeAllocationStartDate);
+            $endDate = strtotime($employeeAllocationEndDate);
+
+            $mondaysCount = 0;
+            $mondaysDates = [];
+            for ($currentDate = $startDate; $currentDate <= $endDate; $currentDate += 86400) {
+                if (date('N', $currentDate) == 1) {
+                    $mondaysCount++;
+                    $mondaysDates[] = date('Y-m-d', $currentDate);
+                }
+            }
+            $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+                ->where('employee_Id', $employeeId)
+                ->get()
+                ->pluck('date')
+                ->toArray();
+
+            $submittedTimesheetsCount = count($submittedTimesheets);
+            $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheets);
+            $pendingTimesheetDatesBeforeCurrent = [];
+            $currentDate = strtotime(date('Y-m-d'));
+
+            foreach ($pendingTimesheetDates as $date) {
+                if (strtotime($date) < $currentDate) {
+                    $pendingTimesheetDatesBeforeCurrent[] = $date;
+                }
+            }
+
+            $pendingTimesheetsCount = count($pendingTimesheetDatesBeforeCurrent);
+            $employeeTotalHours[$employeeId] = [
+                'name' => $employeeName,
+                'total_hours' => $totalHours,
+                'startDate' => $employeeAllocationStartDate,
+                'endDate' => $employeeAllocationEndDate,
+                'mondaysCount' => $mondaysCount,
+                'mondaysDates' => $mondaysDates,
+                'submittedTimesheetsCount' => $submittedTimesheetsCount,
+                'submittedTimesheetDates' => $submittedTimesheets,
+                'pendingTimesheetsCount' => $pendingTimesheetsCount,
+                'pendingTimesheetDates' => $pendingTimesheetDatesBeforeCurrent,
+                'employeeEmail' => $employeeEmail,
+            ];
+        }
+        return view('users.submited_timesheet', ['submitedProjects' => $submitedProjects, 'employeeTotalHours' => $employeeTotalHours]);
+    }
+
+
+    public function getProjectData(Request $request)
+    {
+        $employeeId = Auth::user()->employee_Id;
+        $projectId = $request->input('projectId');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $submitedProjects = TimeEntry::where('employee_id', $employeeId);
+
+        if ($projectId != '') {
+            $submitedProjects = $submitedProjects->where('project_id', $projectId);
+        }
+
+        if ($startDate != '' && $endDate != '') {
+            $submitedProjects = $submitedProjects->whereBetween('date', [$startDate, $endDate]);
+        }
+
+        $submitedProjects = $submitedProjects->with('project', 'approvedByEmployee')->get();
+
+        return response()->json($submitedProjects);
+    }
+    // 
+    // public function reopen(Request $request)
+    // {
+    //     dd($request->all());
+    //     $timesheetId = $request->query('timesheetId');
+    //     $date = $request->query('date');
+    //     $employeeIds = $request->query('employeeIds');
+    //     $projectIds = $request->query('projectIds');
+
+    //     $fetchTimesheetData = TimeEntry::find($timesheetId);
+
+
+    //     if (!$fetchTimesheetData) {
+    //         return response()->json(['error' => 'Timesheet not found'], 404);
+    //     }
+
+    //     $reopenTimesheet = ReopenTimesheet::updateOrCreate(
+    //         ['timesheet_id' => $fetchTimesheetData->id], // Unique identifier for update
+    //         [
+    //             'project_id' => $projectIds,
+    //             'employee_id' => $employeeIds,
+    //             'date' => $date,
+    //             'day' => $fetchTimesheetData->day,
+    //             'status' => 3, // Status for reopening
+    //             'approved_by_employee_id' => null, // Not approved yet
+    //             'rejection_reason' => null,
+    //             'monday_hours' => $fetchTimesheetData->monday_hours,
+    //             'tuesday_hours' => $fetchTimesheetData->tuesday_hours,
+    //             'wednesday_hours' => $fetchTimesheetData->wednesday_hours,
+    //             'thursday_hours' => $fetchTimesheetData->thursday_hours,
+    //             'friday_hours' => $fetchTimesheetData->friday_hours,
+    //             'saturday_hours' => $fetchTimesheetData->saturday_hours,
+    //             'sunday_hours' => $fetchTimesheetData->sunday_hours,
+    //             'total_hours' => $fetchTimesheetData->total_hours,
+    //             'descriptions' => $fetchTimesheetData->descriptions, 
+    //             'is_ProjectManagers' => 3
+    //         ]
+    //     );
+    //     $updateTimesheet = TimeEntry::findOrFail($timesheetId);
+    //     $reopenTimesheet = TimeEntry::updateOrCreate(
+    //         ['id' => $updateTimesheet->id], 
+    //         [
+    //             'project_id' => $projectIds,
+    //             'employee_id' => $employeeIds,
+    //             'date' => $date,
+    //             'day' => $updateTimesheet->day,
+    //             'status' => 3, // Status for reopening
+    //             'approved_by_employee_id' => 0, // Not approved yet
+    //             'rejection_reason' => null,
+    //             'monday_hours' => $updateTimesheet->monday_hours,
+    //             'tuesday_hours' => $updateTimesheet->tuesday_hours,
+    //             'wednesday_hours' => $updateTimesheet->wednesday_hours,
+    //             'thursday_hours' => $updateTimesheet->thursday_hours,
+    //             'friday_hours' => $updateTimesheet->friday_hours,
+    //             'saturday_hours' => $updateTimesheet->saturday_hours,
+    //             'sunday_hours' => $updateTimesheet->sunday_hours,
+    //             'total_hours' => $updateTimesheet->total_hours,
+    //             'descriptions' => $updateTimesheet->descriptions
+    //         ]
+    //     );
+    //     return response()->json(['message' => 'Timesheet request successfully sent.']);
+    // }
+    public function reopen(Request $request)
+    {
+        // Validate incoming request
+        // dd('hlw');
+        $validated = $request->validate([
+            'timesheetId' => 'required|integer|exists:time_entries,id',
+            'date' => 'required|date',
+            'employeeIds' => 'required|integer',
+            'projectIds' => 'required|integer',
+            'reason' => 'required|string',
+        ]);
+
+        // Retrieve validated data
+        $timesheetId = $validated['timesheetId'];
+        $date = $validated['date'];
+        $employeeIds = $validated['employeeIds'];
+        $projectIds = $validated['projectIds'];
+        $reason = $validated['reason'];
+
+        // Find the existing timesheet
+        $fetchTimesheetData = TimeEntry::find($timesheetId);
+
+        if (!$fetchTimesheetData) {
+            return response()->json(['error' => 'Timesheet not found'], 404);
+        }
+
+        // Update or create the ReopenTimesheet record
+        ReopenTimesheet::updateOrCreate(
+            ['timesheet_id' => $fetchTimesheetData->id], // Unique identifier for update
+            [
+                'project_id' => $projectIds,
+                'employee_id' => $employeeIds,
+                'date' => $date,
+                'day' => $fetchTimesheetData->day,
+                'status' => 3, // Status for reopening
+                'approved_by_employee_id' => null, // Not approved yet
+                'rejection_reason' => null, // Store the reason
+                'reopen_reason_user' => $reason,
+                'monday_hours' => $fetchTimesheetData->monday_hours,
+                'tuesday_hours' => $fetchTimesheetData->tuesday_hours,
+                'wednesday_hours' => $fetchTimesheetData->wednesday_hours,
+                'thursday_hours' => $fetchTimesheetData->thursday_hours,
+                'friday_hours' => $fetchTimesheetData->friday_hours,
+                'saturday_hours' => $fetchTimesheetData->saturday_hours,
+                'sunday_hours' => $fetchTimesheetData->sunday_hours,
+                'total_hours' => $fetchTimesheetData->total_hours,
+                'descriptions' => $fetchTimesheetData->descriptions,
+                'is_ProjectManagers' => 3
+            ]
+        );
+
+        TimeEntry::updateOrCreate(
+            ['id' => $timesheetId],
+            [
+                'project_id' => $projectIds,
+                'employee_id' => $employeeIds,
+                'date' => $date,
+                'day' => $fetchTimesheetData->day,
+                'status' => 3, // Status for reopening
+                'approved_by_employee_id' => 0, // Not approved yet
+                'rejection_reason' => null, // Store the reason
+                'reopen_reason_user' => $reason,
+                'monday_hours' => $fetchTimesheetData->monday_hours,
+                'tuesday_hours' => $fetchTimesheetData->tuesday_hours,
+                'wednesday_hours' => $fetchTimesheetData->wednesday_hours,
+                'thursday_hours' => $fetchTimesheetData->thursday_hours,
+                'friday_hours' => $fetchTimesheetData->friday_hours,
+                'saturday_hours' => $fetchTimesheetData->saturday_hours,
+                'sunday_hours' => $fetchTimesheetData->sunday_hours,
+                'total_hours' => $fetchTimesheetData->total_hours,
+                'descriptions' => $fetchTimesheetData->descriptions
+            ]
+        );
+
+        return response()->json(['message' => 'Timesheet request successfully sent.']);
     }
 }
