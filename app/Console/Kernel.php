@@ -7,15 +7,39 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    // Register commands
+    protected $commands = [
+        \App\Console\Commands\SendPendingTimesheets::class,
+        \App\Console\Commands\UpdateExpiredAllocations::class, 
+
+
+    ];
+
     /**
      * Define the application's command schedule.
      *
      * @param \Illuminate\Console\Scheduling\Schedule $schedule
      * @return void
      */
+<<<<<<< HEAD
     protected $commands = [
         \App\Console\Commands\SendPendingTimesheets::class,
         \App\Console\Commands\UpdateExpiredAllocations::class, // Add this line
+=======
+    // protected function schedule(Schedule $schedule)
+    // {
+    //     // Schedule the command to run every minute
+    //     // $schedule->command('email:send-pending-timesheets')->everyMinute();
+    //     $schedule->command('email:send-pending-timesheets')->weeklyOn(1, '01:00');
+    // }
+    protected function schedule(Schedule $schedule)
+{
+    $schedule->command('email:send-pending-timesheets')
+             ->weeklyOn(1, '01:00');
+    $schedule->command('allocations:update-expired')->daily();
+
+}
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     ];
     
@@ -55,7 +79,7 @@ protected function schedule(Schedule $schedule)
      *
      * @return void
      */
-    protected function commands(): void
+    protected function commands()
     {
         $this->load(__DIR__.'/Commands');
 

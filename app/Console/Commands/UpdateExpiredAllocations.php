@@ -3,7 +3,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+<<<<<<< HEAD
 use App\Models\AddworkesEmployee;
+=======
+use App\Models\addworkesEmployee;
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -21,7 +25,11 @@ class UpdateExpiredAllocations extends Command
     {
         $today = Carbon::now()->toDateString();
       
+<<<<<<< HEAD
         $records = AddworkesEmployee::where('enddate', '<', $today)
+=======
+        $records = addworkesEmployee::where('enddate', '<', $today)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             ->where('is_deleted', 0)->update([
                 'is_deleted' => 1,
 

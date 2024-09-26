@@ -156,7 +156,23 @@
                                     @enderror
                                 </div>
 
+<<<<<<< HEAD
                               
+=======
+                                <!-- <div class="col-sm-6">
+
+                                    <label for="">EndDate</label>
+
+                                    <input type="date" class="form-control" name="enddate" placeholder="EndDate">
+
+                                    @error('enddate')
+
+                                    <div class="alert alert-danger">{{ $message }}</div>
+
+                                    @enderror
+
+                                </div> -->
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                 <div class="col-sm-6">
                                     <label for="enddate">End Date</label>
                                     <input type="date" class="form-control" name="enddate" id="enddate" placeholder="End Date">
@@ -435,7 +451,11 @@
 
                 $.ajax({
 
+<<<<<<< HEAD
                     url: '/fetch-users/' + userDesignation,
+=======
+                    url: '/TMS/public/fetch-users/' + userDesignation,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                     type: 'GET',
 

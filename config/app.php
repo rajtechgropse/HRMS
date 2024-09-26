@@ -55,9 +55,16 @@ return [
     |
     */
 
+<<<<<<< HEAD
     'url' => env('APP_URL', 'https://localhost'),
+=======
+    // 'url' => env('APP_URL', 'https://localhost'),
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     'asset_url' => env('ASSET_URL'),
+      'url' => env('APP_URL', 'https://tms.techgropse.in/TMS'),
+
+    // 'asset_url' => env('ASSET_URL', 'https://tms.techgropse.in/TMS'),
 
     /*
     |--------------------------------------------------------------------------

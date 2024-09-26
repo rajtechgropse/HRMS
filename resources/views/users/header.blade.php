@@ -14,6 +14,7 @@
     <link href="{{ asset('src/assets/img/logo.png') }}" rel="stylesheet" />
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/styleusers.css') }}" rel="stylesheet" />
+<<<<<<< HEAD
     <link href="{{ asset('css/dark/darkstyleusers.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/Timeshhet.css') }}" rel="stylesheet" />
     <link href="{{ asset('/layouts/semi-dark-menu/css/light/loader.css') }}" rel="stylesheet" type="text/css" />
@@ -23,6 +24,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/brands.min.css" />
 
 
+=======
+    <link href="{{ asset('css/Timeshhet.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/v5.15.1/css/pro.min.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     <style>
         .submenu {
             display: none;
@@ -44,6 +54,7 @@
                         {{ Auth::user()->name }}
                     </div>
                     <div class="dropdown Profile_dropdown">
+<<<<<<< HEAD
                         <button class="btn btn-secondary" type="button" id="dropdownMenuButton1"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             @if (session('usersImage'))
@@ -52,12 +63,23 @@
                             @else
                                 <img src="{{ asset('usersImage/image.jpeg') }}" alt="User Placeholder"
                                     class="img-thumbnail rounded-circle" height="100" width="100">
+=======
+                        <button class="btn btn-secondary" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if(session('usersImage'))
+                            <img src="{{ asset('usersImage/' . session('usersImage')) }}" alt="User Image" class="img-thumbnail rounded-circle" height="100" width="100">
+                            @else
+                            <img src="{{ asset('usersImage/image.jpeg') }}" alt="User Placeholder" class="img-thumbnail rounded-circle" height="100" width="100">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                             @endif
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <li>
+<<<<<<< HEAD
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal"
                                     data-bs-target="#changePasswordModal2">
+=======
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal2">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     Change Password
                                 </a>
                             </li>
@@ -70,9 +92,13 @@
     </div>
 
     <!-- Change Password Modal -->
+<<<<<<< HEAD
     <div class="modal fade @if ($errors->has('password_change')) show @endif" id="changePasswordModal2" tabindex="-1"
         aria-labelledby="changePasswordModalLabel2" aria-hidden="true"
         style="@if ($errors->has('password_change')) display: block; @endif">
+=======
+    <div class="modal fade @if ($errors->has('password_change')) show @endif" id="changePasswordModal2" tabindex="-1" aria-labelledby="changePasswordModalLabel2" aria-hidden="true" style="@if ($errors->has('password_change')) display: block; @endif">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -81,6 +107,7 @@
                 </div>
                 <div class="modal-body">
                     @if (session('status'))
+<<<<<<< HEAD
                         <div class="alert alert-success">
                             {{ session('status') }}
                         </div>
@@ -94,6 +121,21 @@
                                 @endforeach
                             </ul>
                         </div>
+=======
+                    <div class="alert alert-success">
+                        {{ session('status') }}
+                    </div>
+                    @endif
+
+                    @if ($errors->has('password_change'))
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->get('password_change') as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                     @endif
 
                     <form method="POST" action="{{ route('password.change') }}" id="passwordForm">
@@ -137,18 +179,25 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
 
     <div class="admin_main">
         <div class="admin_siderbarr">
             <a class="active" href="{{ route('user.dashboard') }}"><span><i class="fas fa-home"></i></span>
                 Dashboard</a>
+=======
+    
+
+    <div class="admin_main">
+        <div class="admin_siderbarr">
+            <a class="active" href="{{ route('user.dashboard') }}"><span><i class="fas fa-home"></i></span> Dashboard</a>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             <a href="{{ route('manage_project') }}"><span><i class="fas fa-users"></i></span> Manage Projects</a>
             <a href="{{ route('employeeView') }}"><span><i class="fas fa-users"></i></span> Employees</a>
 
             <a href="{{ route('user.userView') }}"><span><i class="fas fa-users"></i></span> Users Profile</a>
-            <a href="#" id="timeSheetLink"><span><i class="fas fa-users"></i></span> TimeSheet <i
-                    class="fas fa-chevron-down"></i></a>
+            <a href="#" id="timeSheetLink"><span><i class="fas fa-users"></i></span> TimeSheet <i class="fas fa-chevron-down"></i></a>
             <div id="timeSheetSubMenu" class="submenu">
                 <a href="{{ route('user.timeSheet') }}">Weekly Timesheet</a>
                 <a href="{{ route('user.submitedTimesheet') }}">Submitted Timesheet</a>
@@ -194,8 +243,12 @@
             const timeSheetSubMenu = document.getElementById('timeSheetSubMenu');
             timeSheetLink.addEventListener('click', function(event) {
                 event.preventDefault();
+<<<<<<< HEAD
                 timeSheetSubMenu.style.display = (timeSheetSubMenu.style.display === 'none' || !
                     timeSheetSubMenu.style.display) ? 'block' : 'none';
+=======
+                timeSheetSubMenu.style.display = (timeSheetSubMenu.style.display === 'none' || !timeSheetSubMenu.style.display) ? 'block' : 'none';
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             });
         });
     </script>
@@ -253,7 +306,10 @@
                 }
             });
         }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         function checkCurrentPassword() {
             var current_password = $('#current_password').val();
             var error_current_password = $('#error_current_password');

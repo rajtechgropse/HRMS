@@ -58,7 +58,10 @@
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
+<<<<<<< HEAD
                                         <th><input type="checkbox" id="selectAllCheckbox"></th>
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                         <th>S.No.</th>
                                         <th>Employee ID</th>
                                         <th>Name</th>
@@ -74,7 +77,11 @@
                                     @if (isset($employeeData) && $employeeData->count() > 0)
                                         @foreach ($employeeData as $data)
                                             <tr>
+<<<<<<< HEAD
                                                 
+=======
+                                                </td>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data['empId'] }}</td>
                                                 <td>{{ $data['name'] }}</td>

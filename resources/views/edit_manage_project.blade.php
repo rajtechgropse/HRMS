@@ -803,10 +803,16 @@
 
                                             Anup Kumar</option>
 
+<<<<<<< HEAD
                                         <option value="Sumit Dhiman" {{ $project && $project->csm == 'Sumit Dhiman' ? 'selected' : '' }}>
 
                                             Sumit Dhiman</option>
 
+=======
+                                        <option value="Abdalah Jadaan" {{ $project && $project->csm == 'Abdalah Jadaan' ? 'selected' : '' }}>Abdalah Jadaan</option>
+                                             <option value="Ananya Arora" {{ $project && $project->csm == 'Ananya Arora' ? 'selected' : '' }}> Ananya Arora</option>
+                                             <option value="Krishna Patel" {{ $project && $project->csm == 'Krishna Patel' ? 'selected' : '' }}>Krishna Patel</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     </select>
 
                                     @error('csm')
@@ -867,9 +873,15 @@
 
                                         <option value="">Select Service Type</option>
 
+<<<<<<< HEAD
                                         <option value="mannage Service" {{ $project && $project->sc == 'mannage Service' ? 'selected' : '' }}>
 
                                             Mannage Service</option>
+=======
+                                        <option value="Fix Price" {{ $project && $project->sc == 'Fix Price' ? 'selected' : '' }}>
+
+                                            Fix Price</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                         <option value="Time &Metrial" {{ $project && $project->sc == 'Time &Metrial' ? 'selected' : '' }}>
 
@@ -900,9 +912,15 @@
 
                                             Active</option>
 
+<<<<<<< HEAD
                                         <option value="InActive" {{ $project->status == 'InActive' ? 'selected' : '' }}>
 
                                             Inactive</option>
+=======
+                                        <option value="Cancelled" {{ $project->status == 'Cancelled' ? 'selected' : '' }}>
+
+                                            Cancelled</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                         <option value="Completed" {{ $project->status == 'Completed' ? 'selected' : '' }}>Completed</option>
 

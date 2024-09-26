@@ -22,16 +22,27 @@ class TimeEntry extends Model
     {
         return $this->hasMany(addworkesEmployee::class, 'project_id', 'project_id');
     }
+<<<<<<< HEAD
     public function addworkesEmployeesByEmployee()
     {
         return $this->hasMany(addworkesEmployee::class, 'employee_id', 'employee_id');
     }
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function addworkesEmployeesWithEmployee_id(){
         return $this->belongsTo(addworkesEmployee::class, 'employee_id');
 
     }
+<<<<<<< HEAD
+=======
+    public function addworkesEmployeesByEmployee()
+    {
+        return $this->hasMany(addworkesEmployee::class, 'employee_id', 'employee_id');
+    }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     public function approvedByEmployee()
     {
         return $this->belongsTo(employees::class, 'approvedby_employee_id', 'id');
     }
 }
+

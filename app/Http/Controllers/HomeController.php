@@ -123,8 +123,14 @@ class HomeController  extends Controller
       $modules = Session::get('user_modules_' . auth()->id());
       $userDesignation = 'Project Manager';
       $projectManagers  = employees::Where('designation', $userDesignation)->whereIn('employeestatus',[0])->get();
+<<<<<<< HEAD
       // dd($projectManagers);
 
+=======
+
+      // dd($projectManagers);
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
       return view('add-project',  ['modules' => $modules, 'projectManagers' => $projectManagers]);
    }
    
@@ -289,6 +295,10 @@ class HomeController  extends Controller
       $countries = Country::all();
 
 
+<<<<<<< HEAD
+=======
+      // $projectManagers  = employees::Where('designation', $userDesignation)->get();
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
       $projectManagers  = employees::Where('designation', $userDesignation)->whereIn('employeestatus',[0])->get();
 
       $employeeIds = $project->pluck('pmemployeeId');
@@ -420,18 +430,29 @@ class HomeController  extends Controller
    {
       if (Auth::user()->status == 0) {
          $projects = AddProjects::paginate(15);
+<<<<<<< HEAD
          $currentDate = \Carbon\Carbon::now()->format('Y-m-d');
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
          $modules = Session::get('user_modules_' . auth()->id());
 
          $projectManagersIds = $projects->pluck('pmemployeeId')->unique();
 
          $projectManagers = employees::whereIn('id', $projectManagersIds)->get()->keyBy('id');
+<<<<<<< HEAD
          return view("manage-project", [
             'users' => $projects,
             'modules' => $modules,
             'projectManagers' => $projectManagers,
             'currentMonth' => $currentDate,
+=======
+
+         return view("manage-project", [
+            'users' => $projects,
+            'modules' => $modules,
+            'projectManagers' => $projectManagers
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
          ]);
       } elseif (Auth::user()->status == 1) {
          if (Auth::user()->userDesignation == 'Project Manager') {
@@ -441,7 +462,10 @@ class HomeController  extends Controller
                ->toArray();
 
             $projects = AddProjects::whereIn('id', $assignedProjects)->paginate(15);
+<<<<<<< HEAD
             // dd($projects);
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             $projectManagersIds = $projects->pluck('pmemployeeId')->unique();
 
             $projectManagers = employees::whereIn('id', $projectManagersIds)->get()->keyBy('id');
@@ -488,11 +512,65 @@ class HomeController  extends Controller
       $modules = Session::get('user_modules_' . auth()->id());
       return view('fileUpload', ['modules' => $modules, 'projectId' => $projectId, 'fileUploads' => $fileUploads]);
    }
+<<<<<<< HEAD
   
+=======
+   // public function projectUploadsStore(Request $request)
+   // {
+
+   //    $validator = Validator::make(
+   //       $request->all(),
+   //       [
+   //          'project_id' => 'required',
+   //          'category' => 'required',
+   //          'contract' => 'required|array',
+   //          'contract.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+   //       ],
+   //       [
+   //          'category.required' => 'The category is required.',
+   //          'contract.required' => 'At least one contract file is required.',
+   //          'contract.*.image' => 'Each contract file must be an image.',
+   //          'contract.*.mimes' => 'Each contract file must be a valid image format (jpeg, png, jpg, gif, svg).',
+   //          'contract.*.max' => 'Each contract file must not exceed 2048 kilobytes (2MB).',
+
+   //       ]
+   //    );
+
+   //    if ($validator->fails()) {
+   //       return redirect()->back()->withErrors($validator)->withInput();
+   //    }
+   //    $projectData = [
+   //       'project_id' => $request->input('project_id'),
+   //       'category' => $request->input('category'),
+   //    ];
+
+   //    if ($request->hasFile('contract')) {
+   //       $images = $request->file('contract');
+   //       $imagePaths = [];
+
+   //       foreach ($images as $key => $image) {
+   //          $profileImage = date('YmdHis') . '_' . $key . '.' . $image->getClientOriginalExtension();
+   //          $image->move(public_path('images'), $profileImage);
+   //          $imagePaths[] = $profileImage;
+   //       }
+
+   //       $projectData['contract'] = json_encode($imagePaths);
+   //    }
+   //    $projectData = projectsuploadsfile::create($projectData);
+
+   //    return redirect()->back()->with('success', 'Project uploads successfully.');
+
+   //    return redirect()->back()->with('error', 'Failed to upload project files.');
+   // }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
    public function projectUploadsStore(Request $request)
    {
+<<<<<<< HEAD
+=======
+      // Validate the request
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
       $validator = Validator::make(
          $request->all(),
          [
@@ -859,7 +937,10 @@ class HomeController  extends Controller
       } elseif (Auth::user()->status == 1) {
          $data = mileStone::where('project_id', $projectData->id)->get();
          $projectId = $projectData->id;
+<<<<<<< HEAD
          // dd($data);
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
          return view('users.addMilestoneUser', [
 
             'projectId' => $projectId,
@@ -927,6 +1008,10 @@ class HomeController  extends Controller
          'hours' => $request->input('time'),
          'description' => $request->input('description'),
          'status' => 2,
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
       ];
       // dd($AddMilestoneDetails);
 
@@ -997,7 +1082,10 @@ class HomeController  extends Controller
                'hours' => $request->input('hours'),
                'description' => $request->input('description'),
                'status' => 0,
+<<<<<<< HEAD
 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
             ]);
 
             return redirect()->route('addmilestone.id', ['id' => $project_id])->with('status', 'Milestone Updated Successfully');

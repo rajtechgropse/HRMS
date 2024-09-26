@@ -111,6 +111,27 @@
                                     <option value="" selected>Select User Designation</option>
 
                                     @if($employee->userDepartment == 0)
+<<<<<<< HEAD
+=======
+                                    {{-- <option value="Project Manager" {{ $employee->userDesignation == 'Project Manager' ? 'selected' : '' }}>Project Manager</option>
+                                    <option value="Delivery Head" {{ $employee->userDesignation == 'Delivery Head' ? 'selected' : '' }}>Delivery Head</option>
+                                    <option value="Program Manager" {{ $employee->userDesignation == 'Program Manager' ? 'selected' : '' }}>Program Manager</option>
+                                    <option value="Technical Architect" {{ $employee->userDesignation == 'Technical Architect' ? 'selected' : '' }}>Technical Architect</option>
+                                    <option value="Solution Architect" {{ $employee->userDesignation == 'Solution Architect' ? 'selected' : '' }}>Solution Architect</option>
+                                    <option value="Project Coordinator" {{ $employee->userDesignation == 'Project Coordinator' ? 'selected' : '' }}>Project Coordinator</option>
+                                    <option value="Junior Software Engineer" {{ $employee->userDesignation == 'Junior Software Engineer' ? 'selected' : '' }}>Junior Software Engineer</option>
+                                    <option value="Software Engineer" {{ $employee->userDesignation == 'Software Engineer' ? 'selected' : '' }}>Software Engineer</option>
+                                    <option value="Product Manager" {{ $employee->userDesignation == 'Product Manager' ? 'selected' : '' }}>Product Manager</option>
+                                    <option value="Senior Software Engineer" {{ $employee->userDesignation == 'Senior Software Engineer' ? 'selected' : '' }}>Senior Software Engineer</option>
+                                    <option value="Business Analyst" {{ $employee->userDesignation == 'Business Analyst' ? 'selected' : '' }}>Business Analyst</option>
+                                    <option value="Senior Business Analyst" {{ $employee->userDesignation == 'Senior Business Analyst' ? 'selected' : '' }}>Senior Business Analyst</option>
+                                    <option value="Software Engineer Trainee" {{ $employee->userDesignation == 'Software Engineer Trainee' ? 'selected' : '' }}>Software Engineer Trainee</option>
+                                    <option value="Software Test Engineer" {{ $employee->userDesignation == 'Software Test Engineer' ? 'selected' : '' }}>Software Test Engineer</option>
+                                    <option value="Senior Software Test Engineer" {{ $employee->userDesignation == 'Senior Software Test Engineer' ? 'selected' : '' }}>Senior Software Test Engineer</option>
+                                    <option value="UI/UX Designer" {{ $employee->userDesignation == 'UX Designer' ? 'selected' : '' }}>UX Designer</option>
+                                    <option value="Web Designer" {{ $employee->userDesignation == 'Web Designer' ? 'selected' : '' }}>Web Designer</option>
+                                    <option value="Devops Engineer" {{ $employee->userDesignation == 'Devops Engineer' ? 'selected' : '' }}>Devops Engineer</option> --}}
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     <option value="Project Manager" {{ $employee->userDesignation == 'Project Manager' ? 'selected' : '' }}>Project Manager</option>
                                     <option value="Delivery Head" {{ $employee->userDesignation == 'Delivery Head' ? 'selected' : '' }}>Delivery Head</option>
                                     <option value="Program Manager" {{ $employee->userDesignation == 'Program Manager' ? 'selected' : '' }}>Program Manager</option>
@@ -119,13 +140,20 @@
                                     <option value="Project Coordinator" {{ $employee->userDesignation == 'Project Coordinator' ? 'selected' : '' }}>Project Coordinator</option>
                                     <option value="Junior Software Engineer" {{ $employee->userDesignation == 'Junior Software Engineer' ? 'selected' : '' }}>Junior Software Engineer</option>
                                     <option value="Software Engineer" {{ $employee->userDesignation == 'Software Engineer' ? 'selected' : '' }}>Software Engineer</option>
+<<<<<<< HEAD
                                     <option value="Senior Software Engineer" {{ $employee->userDesignation == 'Senior Software Engineer' ? 'selected' : '' }}>Senior Software Engineer</option>
                                     <option value="Business Analyst" {{ $employee->userDesignation == 'Business Analyst' ? 'selected' : '' }}>Business Analyst</option>
                                     <option value="Product Manager" {{ $employee->userDesignation == 'Product Manager' ? 'selected' : '' }}>Product Manager</option>
+=======
+                                    <option value="Product Manager" {{ $employee->userDesignation == 'Product Manager' ? 'selected' : '' }}>Product Manager</option>
+                                    <option value="Senior Software Engineer" {{ $employee->userDesignation == 'Senior Software Engineer' ? 'selected' : '' }}>Senior Software Engineer</option>
+                                    <option value="Business Analyst" {{ $employee->userDesignation == 'Business Analyst' ? 'selected' : '' }}>Business Analyst</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     <option value="Senior Business Analyst" {{ $employee->userDesignation == 'Senior Business Analyst' ? 'selected' : '' }}>Senior Business Analyst</option>
                                     <option value="Software Engineer Trainee" {{ $employee->userDesignation == 'Software Engineer Trainee' ? 'selected' : '' }}>Software Engineer Trainee</option>
                                     <option value="Software Test Engineer" {{ $employee->userDesignation == 'Software Test Engineer' ? 'selected' : '' }}>Software Test Engineer</option>
                                     <option value="Senior Software Test Engineer" {{ $employee->userDesignation == 'Senior Software Test Engineer' ? 'selected' : '' }}>Senior Software Test Engineer</option>
+<<<<<<< HEAD
                                     <option value="UX Designer" {{ $employee->userDesignation == 'UX Designer' ? 'selected' : '' }}>UX Designer</option>
                                     <option value="Web Designer" {{ $employee->userDesignation == 'Web Designer' ? 'selected' : '' }}>Web Designer</option>
                                     <option value="Devops Engineer" {{ $employee->userDesignation == 'Devops Engineer' ? 'selected' : '' }}>Devops Engineer</option>
@@ -133,6 +161,11 @@
                                     
 
                                     
+=======
+                                    <option value="UI/UX Designer" {{ $employee->userDesignation == 'UX Designer' ? 'selected' : '' }}>UX Designer</option>
+                                    <option value="Web Designer" {{ $employee->userDesignation == 'Web Designer' ? 'selected' : '' }}>Web Designer</option>
+                                    <option value="Devops Engineer" {{ $employee->userDesignation == 'Devops Engineer' ? 'selected' : '' }}>Devops Engineer</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                     @endif
 
@@ -238,7 +271,11 @@
 
             if (employeeId !== '') {
                 $.ajax({
+<<<<<<< HEAD
                     url: '/fetch-employee-name/' + employeeId,
+=======
+                    url: '/TMS/public' + '/fetch-employee-name/' + employeeId,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                     type: 'GET',
                     success: function(data) {
                         $('#employee_Id').append('<option value="' + data.id + '" selected>' + data.name + '</option>');
@@ -283,7 +320,11 @@
 
                 if (userDepartment == 0) {
 
+<<<<<<< HEAD
                     options = ["Select Departments", "Delivery Head", "Program Manager", "Project Manager", "Technical Architect", "Solution Architect", "Project Coordinator", "Junior Software Engineer", "Software Engineer","Intern- Business Analyst", "Senior Software Engineer", "Business Analyst", "Product Manager", "Senior Business Analyst", "Software Engineer Trainee", "Software Test Engineer", "Senior Software Test Engineer", "UX Designer", "Web Designer", "Devops Engineer","Intern- Business Analyst"
+=======
+                    options = ["Select Departments", "Delivery Head", "Program Manager", "Project Manager", "Technical Architect", "Solution Architect", "Project Coordinator", "Junior Software Engineer", "Software Engineer", "Senior Software Engineer", "Business Analyst", "Product Manager", "Senior Business Analyst", "Software Engineer Trainee", "Software Test Engineer", "Senior Software Test Engineer", "UI/UX Designer", "Web Designer", "Devops Engineer"
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                     ];
                 }
@@ -349,7 +390,11 @@
 
                 $.ajax({
 
+<<<<<<< HEAD
                     url: '/fetch-users/' + userDesignation,
+=======
+                    url: '/TMS/public' + '/fetch-users/' + userDesignation,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                     type: 'GET',
 

@@ -482,8 +482,33 @@
                                         <option value="Aman Mishra">Aman Mishra</option>
 
                                         <option value="Anup Kumar">Anup Kumar</option>
+<<<<<<< HEAD
 
                                         <option value="Sumit Dhiman">Sumit Dhiman</option>
+=======
+                                        <option value="Abdalah Jadaan
+">Abdalah Jadaan
+</option>
+                                        <option value="Ananya Arora
+">Ananya Arora
+</option>
+                                        <option value="Krishna Patel
+
+
+
+
+
+">Krishna Patel
+
+
+
+
+
+</option>
+
+
+                                        
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                     </select>
 
@@ -545,7 +570,11 @@
 
                                         <option selected value="">Select ServiceType</option>
 
+<<<<<<< HEAD
                                         <option value="mannage Service">Mannage Service</option>
+=======
+                                        <option value="Fix Price">Fix Price</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                         <option value="Time &Metrial">Time & Metrial</option>
 
@@ -571,7 +600,11 @@
 
                                         <option value="Active">Active</option>
 
+<<<<<<< HEAD
                                         <option value="InActive">InActive</option>
+=======
+                                        <option value="Cancelled">Cancelled</option>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                                         <option value="Complected ">Complected </option>
 

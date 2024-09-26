@@ -177,6 +177,7 @@
 
     </form>
 
+<<<<<<< HEAD
     {{-- <script>
 
         document.getElementById('role').addEventListener('change', function() {
@@ -196,6 +197,27 @@
         });
 
     </script> --}}
+=======
+    <!--<script>-->
+
+    <!--    document.getElementById('role').addEventListener('change', function() {-->
+
+    <!--        document.getElementById('selectedRole').value = this.value;-->
+
+    <!--        if (this.value === 'admin') {-->
+
+    <!--            document.getElementById('loginForm').action = "{{ route('admin.login') }}";-->
+
+    <!--        } else if (this.value === 'user') {-->
+
+    <!--            document.getElementById('loginForm').action = "{{ route('user.login') }}";-->
+
+    <!--        }-->
+
+    <!--    });-->
+
+    <!--</script>-->
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     <script>
         var adminLoginUrl = "{{ route('admin.login') }}";
         var userLoginUrl = "{{ route('user.login') }}";

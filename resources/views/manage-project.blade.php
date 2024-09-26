@@ -31,6 +31,10 @@
                         @endif
                     </div>
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                 <div class="container">
                     <div class="row layout-spacing">
                         <div class="col-lg-12">
@@ -72,10 +76,15 @@
                                                         @endphp
                                                         @foreach ($users as $user)
                                                             @php
+<<<<<<< HEAD
                                                                 $endDate = \Carbon\Carbon::parse(
                                                                     $user->projectenddate,
                                                                 )->format('Y-m');
                                                                 $isEndDateCurrentMonth = $endDate === $currentMonth;
+=======
+                                                                $endDate = \Carbon\Carbon::parse($user->projectenddate)->format('Y-m');
+                                                                $isEndDateCurrentMonth = ($endDate === $currentMonth);
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                             @endphp
                                                             <tr role="row">
                                                                 <td>{{ $count++ }}</td>
@@ -90,6 +99,10 @@
                                                                         N/A
                                                                     @endif
                                                                 </td>
+<<<<<<< HEAD
+=======
+                                                                
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                                 <td class="text-center">
                                                                     <span class="shadow-none badge badge-primary">
                                                                         {{ $user->status }}
@@ -97,19 +110,28 @@
                                                                 </td>
                                                                 <td class="text-center">{{ $user->projectstartdate }}</td>
                                                                 <td class="text-center">
+<<<<<<< HEAD
                                                                     <span
                                                                         class="{{ $isEndDateCurrentMonth ? 'badge badge-danger' : 'badge badge-primary' }}">
+=======
+                                                                    <span class="{{ $isEndDateCurrentMonth ? 'badge badge-danger' : 'badge badge-primary' }}">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                                         {{ $user->projectenddate }}
                                                                     </span>
                                                                 </td>
                                                                 <td class="text-center">
                                                                     @if (isset($modules[1]['project.edit']) && $modules[1]['project.edit'] == 1)
+<<<<<<< HEAD
                                                                         <a
                                                                             href="{{ route('project.edit', ['id' => $user->id]) }}">
+=======
+                                                                        <a href="{{ route('project.edit', ['id' => $user->id]) }}">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                                             <i class="fa fa-edit btn btn-info p-1"></i>
                                                                         </a>
                                                                     @endif
                                                                     @if (isset($modules[1]['project.view']) && $modules[1]['project.view'] == 1)
+<<<<<<< HEAD
                                                                         <a
                                                                             href="{{ route('project.detail', ['id' => $user->id]) }}">
                                                                             <i class="fa fa-eye btn btn-success p-1"></i>
@@ -117,16 +139,32 @@
                                                                     @endif
                                                                     <a
                                                                         href="{{ route('projectsUploadFile', ['id' => $user->id]) }}">
+=======
+                                                                        <a href="{{ route('project.detail', ['id' => $user->id]) }}">
+                                                                            <i class="fa fa-eye btn btn-success p-1"></i>
+                                                                        </a>
+                                                                    @endif
+                                                                    <a href="{{ route('projectsUploadFile', ['id' => $user->id]) }}">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                                         <i class="fa fa-upload btn btn-warning p-1"></i>
                                                                     </a>
                                                                     @if (isset($modules[1]['project.delete']) && $modules[1]['project.delete'] == 1)
                                                                         <form method="POST"
+<<<<<<< HEAD
                                                                             action="{{ route('deleteProject', ['id' => $user->id]) }}"
                                                                             class="d-inline"
                                                                             onsubmit="return confirm('Are you sure you want to delete this project?');">
                                                                             @csrf
                                                                             @method('DELETE')
                                                                             <button type="submit" class="manage_project">
+=======
+                                                                              action="{{ route('deleteProject', ['id' => $user->id]) }}"
+                                                                              class="d-inline"
+                                                                              onsubmit="return confirm('Are you sure you want to delete this project?');">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit" class="custom_btn_icon bg-danger">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                                                 <i class="fa fa-trash"></i>
                                                                             </button>
                                                                         </form>

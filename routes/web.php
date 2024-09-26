@@ -12,8 +12,11 @@ use App\Http\Controllers\MailController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ReopenTimesheetController;
+<<<<<<< HEAD
 use App\Http\Controllers\BeachController;
 use App\Http\Controllers\EmployeeController;
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
 
@@ -33,6 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/rejectedData', 'App\Http\Controllers\DashboardController@rejectedData')->name('rejectedData');
     Route::post('/fetch-data', 'App\Http\Controllers\DashboardController@fetchData')->name('fetch.data');
     Route::get('/timesheetmanagers', 'App\Http\Controllers\TimeSheetManagers@timesheetmanagers')->name('timesheet.managers');
+<<<<<<< HEAD
     Route::get('/beach-details', 'App\Http\Controllers\BeachController@beachDetails')->name('beach_dates');
 
 
@@ -44,6 +48,23 @@ Route::middleware(['auth'])->group(function () {
 
     // Route::get('/beach_log_ajax/{id}', 'App\Http\Controllers\BeachController@viewBeachLog')->name('beachLog');
 
+=======
+    // Route::put('/toggle-status/{id}', 'App\Http\Controllers\TimeSheetManagers@toggleStatus')->name('toggle.status');
+    Route::post('/update-status/{id}', 'App\Http\Controllers\TimeSheetManagers@updateStatus')->name('update.status');
+    // beach-details
+    Route::get('/beach-details', 'App\Http\Controllers\BeachController@beachDetails')->name('beach.Details');
+    Route::get('/beach_log_ajax/{id}', 'App\Http\Controllers\BeachController@viewBeachLog')->name('beach_data_by_ajax');
+    Route::get('/beach_log/{id}', 'App\Http\Controllers\BeachController@getBeachDetailsForAllEmployees')->name('beachLog');
+    Route::post('/beach_dates', 'App\Http\Controllers\BeachController@beachDetailsajax')->name('beach.dates');
+    // Route::get('/fetch-employee-details/{employeeName}', 'App\Http\Controllers\UserController@fetchEmployeeDetails')->name('fetch_details');
+    Route::get('/fetch_details/{employeeName}', 'App\Http\Controllers\BeachController@fetchEmployeeDetails')->name('fetch_details');
+    Route::get('/expiringData', 'App\Http\Controllers\DashboardController@expiringData')->name('expiringData');
+
+
+
+   
+    Route::post('/beach-dates', 'App\Http\Controllers\BeachController@beachDetailsajax')->name('beach.dates');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
 
@@ -66,6 +87,7 @@ Route::middleware(['auth'])->group(function () {
     Route::any('/projects/{id}/project_view_with_hours', 'App\Http\Controllers\EmployeeWorkedHours@projectHours')->name('project.hours');
     Route::any('/projects/{id}/employee_Hours/', 'App\Http\Controllers\EmployeeWorkedHours@employeHours')->name('employee.hours');
     Route::get('/employee-hours', 'App\Http\Controllers\EmployeeWorkedHours@employeeHoursWithTimeSheets')->name('employee.WithTimesheets');
+<<<<<<< HEAD
     Route::get('/non_allocation_user', 'App\Http\Controllers\DashboardController@nonAllocationUser')->name('nonAllocationUser');
     Route::get('/expiringData', 'App\Http\Controllers\DashboardController@expiringData')->name('expiringData');
 
@@ -77,6 +99,12 @@ Route::get('/get-employee-info/{id}', [BeachController::class, 'getEmployeeInfo'
 
     
 
+=======
+    Route::get('/timesheet_reopen', [ReopenTimesheetController::class, 'timesheetReOpen'])->name('timesheetReOpen');
+    Route::post('/updateAdminApprovalStatus', [ReopenTimesheetController::class, 'updateAdminApprovalStatus'])->name('updateAdminApprovalStatus');
+    Route::get('/non_allocation_user', 'App\Http\Controllers\DashboardController@nonAllocationUser')->name('nonAllocationUser');
+    Route::get('/not_submited_data', 'App\Http\Controllers\DashboardController@notSubmitedData')->name('notSubmitedData');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     Route::delete('/project/{id}', 'App\Http\Controllers\HomeController@deleteProject')->name('deleteProject');
     Route::any('/projectsUploadFile/{id}', 'App\Http\Controllers\HomeController@projectsUploadFile')->name('projectsUploadFile');
@@ -137,6 +165,7 @@ Route::get('/get-employee-info/{id}', [BeachController::class, 'getEmployeeInfo'
     Route::get('/add-workesEmployee/{id}', 'App\Http\Controllers\AddworkemployeeController@addWorksEmployee')->name('addWorksEmployee.id');
     Route::get('/fetch-users/{type}', 'App\Http\Controllers\AddworkemployeeController@getUsersByType');
     Route::get('/employees/{id}/edit', 'App\Http\Controllers\AddworkemployeeController@editEmployeeWork')->name('editEmployee');
+<<<<<<< HEAD
     Route::any('/add_workesEmployee_update_Store', 'App\Http\Controllers\AddworkemployeeController@addworkesEmployeeUpdateStore')->name('addworkesEmployee.updateStore');
 
     // Route::get('/fetch-employee-name/{employeeId}', 'App\Http\Controllers\AddworkemployeeController@fetchEmployeeName')->name('fetch.employee.name');
@@ -164,10 +193,16 @@ Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDeta
 
 
     // /fetch-employee-details/${searchQuery}
+=======
+    Route::get('/fetch-employee-name/{employeeId}', 'App\Http\Controllers\AddworkemployeeController@fetchEmployeeName')->name('fetch.employee.name');
+    Route::get('/user/description/{id}', [ApprovalTimesheetController::class, 'description'])->name('description');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
     Route::delete('/employee/{id}', 'App\Http\Controllers\AddworkemployeeController@deleteEmployee')->name('deleteEmployee');
     Route::any('/add-workesEmployeeStore', 'App\Http\Controllers\AddworkemployeeController@addworkesEmployeeStore')->name('add-workesEmployeeStore');
+    Route::any('/add_workesEmployee_update_Store', 'App\Http\Controllers\AddworkemployeeController@addworkesEmployeeUpdateStore')->name('addworkesEmployee.updateStore');
+
     Route::any('/ListOfDesigner', 'App\Http\Controllers\DesignerController@DesignerList')->name('DesignerList');
     Route::any('/addEmployee', 'App\Http\Controllers\EmployeeController@employeeManagement')->name('employeeManagement');
     Route::any('/employeeManagementStore', 'App\Http\Controllers\EmployeeController@employeeStore')->name('employeeStore');
@@ -184,11 +219,25 @@ Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDeta
     Route::any('employeeExportCSV', 'App\Http\Controllers\EmployeeController@employeeExportCSV')->name('employeeExportCSV');
     Route::any('employeeimportCSV', 'App\Http\Controllers\EmployeeController@employeeimportCSV')->name('employeeimportCSV');
     Route::any('/milestone', 'App\Http\Controllers\MilestoneController@milestonelogs')->name('milestonelogs');
+<<<<<<< HEAD
     // Route::post('/update-milestone-status', 'App\Http\Controllers\MilestoneController@updateStatus')->name('update-milestone-status');
     Route::post('/update-milestone-status-manager', [MilestoneController::class, 'updateStatusManager'])->name('updateMilestoneStatus');
     Route::post('/submit-milestone-details', [MilestoneController::class, 'submitMilestoneDetails'])->name('submitMilestoneDetails');
 
 
+=======
+    Route::post('/update-milestone-status', 'App\Http\Controllers\MilestoneController@updateStatus')->name('update-milestone-status');
+    Route::post('/update-milestone-status-manager', [MilestoneController::class, 'updateStatusManager'])->name('updateMilestoneStatus');
+    Route::post('/submit-milestone-details', [MilestoneController::class, 'submitMilestoneDetails'])->name('submitMilestoneDetails');
+    Route::get('/fetch-employee-details/{employeeName}', 'App\Http\Controllers\UserController@fetchEmployeeDetails');
+    Route::post('/fetch-employee-details','App\Http\Controllers\EmployeeController@fetchEmployeeDetails')
+            ->name('fetchEmployeeDetails');
+    Route::any('employee-allcation/{id}', 'App\Http\Controllers\EmployeeController@employeeAllcation')->name('employeeAllcation');
+    Route::get('/fetch-employee-details-ajax',  'App\Http\Controllers\EmployeeController@fetchEmployeeDetailsAjax')
+    ->name('fetchEmployeeDetailsAjax');
+    Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDetails')
+->name('fetchDetails');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
 
     Route::any('/logout', [HomeController::class, 'logout'])->name('logout');
@@ -198,12 +247,24 @@ Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDeta
     Route::post('/fetch-data-projectManagers', [UsersController::class, 'fetchdataProjectManager'])->name('fetch.dataByPm');
     Route::any('user/approvedData', [UsersController::class, 'approvedDataByPm'])->name('approvedDataByPm');
     Route::any('user/pendingData', [UsersController::class, 'pendingDataByPm'])->name('pendingDataByPm');
+<<<<<<< HEAD
     Route::any('user/rejectedData', [UsersController::class, 'rejectedDataByPm'])->name('rejectedDataByPm');
     Route::any('user/expiring_DataPM', [UsersController::class, 'expiringDataPM'])->name('expiringDataPM');
 
     Route::any('/user/userView', [UsersController::class, 'userView'])->name('user.userView');
     Route::post('/user/uploadimage', [UsersController::class, 'uploadImage'])->name('user.uploadimage');
+=======
+
+    Route::any('user/rejectedData', [UsersController::class, 'rejectedDataByPm'])->name('rejectedDataByPm');
+    // fetch.dataByPm
+    // 
+    Route::any('/user/userView', [UsersController::class, 'userView'])->name('user.userView');
+    Route::post('/user/uploadimage', [UsersController::class, 'uploadImage'])->name('user.uploadimage');
+
+    // Route::any('/user/user.timeSheet', [TimesheetController::class, 'Timesheet'])->name('user.timeSheet');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     Route::any('/user/user.timeSheet', [TimesheetController::class, 'Timesheet'])->name('user.timeSheet');
+
     Route::any('/user/user.enterDateInProject', [TimesheetController::class, 'enterDateInProject'])->name('user.enterDateInProject');
     Route::any('/user/user.enterTimeInProject', [TimesheetController::class, 'enterTimeInProject'])->name('user.enterTimeInProject');
     Route::any('/user/enterTimeInProjectUpdaterejected', [TimesheetController::class, 'enterTimeInProjectUpdaterejected'])->name('enterTimeInProjectUpdaterejected');
@@ -216,6 +277,7 @@ Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDeta
     Route::any('/user/user.approvalTimesheet', [ApprovalTimesheetController::class, 'approvalTimesheet'])->name('user.approvalTimesheet');
     Route::put('/user/user.update-status/{timeSheet_Id}', [ApprovalTimesheetController::class, 'updateStatusApprovalTimesheet'])->name('update-status');
     Route::get('/get-project-data_by-projectmanager', [ApprovalTimesheetController::class, 'get_project_data_by_projectmanager'])->name('getprojectdata');
+<<<<<<< HEAD
     Route::get('/user/description/{id}', [ApprovalTimesheetController::class, 'description'])->name('description');
     Route::post('/reopen-timesheet', [TimesheetController::class, 'reopen'])->name('reopenTimesheet');
     Route::get('/user/reopenTimesheet', [ReopenTimesheetController::class, 'ReopenTimesheetView'])->name('ReopenTimesheetView');
@@ -229,6 +291,16 @@ Route::get('/fetch-details',  'App\Http\Controllers\EmployeeController@fetchDeta
 
 
 
+=======
+    Route::post('/reopen-timesheet', [TimesheetController::class, 'reopen'])->name('reopenTimesheet');
+    Route::any('/user/enterTimeInProjectUpdaterejected', [TimesheetController::class, 'enterTimeInProjectUpdaterejected'])->name('enterTimeInProjectUpdaterejected');
+    Route::get('/user/reopenTimesheet', [ReopenTimesheetController::class, 'ReopenTimesheetView'])->name('ReopenTimesheetView');
+    Route::post('/update-approval-status', [ReopenTimesheetController::class, 'updateApprovalStatus'])->name('updateApprovalStatus');
+
+
+
+    // Route::post('/reopen-timesheet', [TimesheetController::class, 'reopen'])->name('reopenTimesheet');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
     // Route::post('/change_password_user', [PasswordController::class, 'changePassword'])->name('password.updates');
     // Route::post('/change_passworduser', [PasswordController::class, 'changePassword'])->name('password.updatesUser');

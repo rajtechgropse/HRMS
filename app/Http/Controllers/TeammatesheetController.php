@@ -124,7 +124,275 @@ class TeammatesheetController extends Controller
     //     }
     //     return view('users/employeeHours', compact('employeeTotalHours'));
     // }
+<<<<<<< HEAD
     public function teamMateSheetHour($id)
+=======
+//     public function teamMateSheetHour($id)
+// {
+//     $projectId = $id;
+//     $timeEntries = TimeEntry::where('project_id', $projectId)
+//                     ->where('status', 1)
+//                     ->with('employee', 'addworkesEmployees')
+//                     ->get()
+//                     ->toArray();
+
+//     $employeeTotalHours = [];
+//     $currentDate = strtotime(date('Y-m-d'));
+
+//     foreach ($timeEntries as $timeEntry) {
+//         $employeeId = $timeEntry['employee']['id'];
+//         $employeeName = $timeEntry['employee']['name'];
+//         $totalHours = $timeEntry['total_hours'];
+//         $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
+//             return $allocation['employee_Id'] == $employeeId;
+//         });
+//         $employeeAllcationStartDate = reset($relevantEmployeeAllocation)['startdate'];
+//         $employeeAllcationEndDate = reset($relevantEmployeeAllocation)['enddate'];
+//         $startDate = strtotime($employeeAllcationStartDate);
+//         $endDate = strtotime($employeeAllcationEndDate);
+//         $mondaysCount = 0;
+//         $mondaysDates = [];
+//         $submittedTimesheetDates = [];
+//         $pendingTimesheetDates = [];
+//         $pendingTimesheetDatesBeforeCurrent = [];
+
+//         for ($currentDateLoop = $startDate; $currentDateLoop <= $endDate; $currentDateLoop += 86400) {
+//             if (date('N', $currentDateLoop) == 1) {
+//                 $mondaysCount++;
+//                 $mondaysDates[] = date('Y-m-d', $currentDateLoop);
+//             }
+//         }
+
+//         $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+//                              ->where('employee_id', $employeeId)
+//                              ->where('status', 1)
+//                              ->get();
+
+//         foreach ($submittedTimesheets as $timesheet) {
+//             $submittedTimesheetDates[] = $timesheet->date;
+//         }
+//         $submittedTimesheetsCount = count($submittedTimesheetDates);
+
+//         $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheetDates);
+
+//         foreach ($pendingTimesheetDates as $date) {
+//             if (strtotime($date) < $currentDate) {
+//                 $pendingTimesheetDatesBeforeCurrent[] = $date;
+//             }
+//         }
+
+//         $pendingTimesheetsCount = count($pendingTimesheetDatesBeforeCurrent);
+
+//         if (isset($employeeTotalHours[$employeeId])) {
+//             $employeeTotalHours[$employeeId]['total_hours'] += $totalHours;
+//         } else {
+//             $employeeTotalHours[$employeeId] = [
+//                 'name' => $employeeName,
+//                 'total_hours' => $totalHours,
+//                 'startDate' => $employeeAllcationStartDate,
+//                 'endDate' => $employeeAllcationEndDate,
+//                 'mondaysCount' => $mondaysCount,
+//                 'mondaysDates' => $mondaysDates,
+//                 'submittedTimesheetsCount' => $submittedTimesheetsCount,
+//                 'submittedTimesheetDates' => $submittedTimesheetDates,
+//                 'pendingTimesheetsCount' => $pendingTimesheetsCount,
+//                 'pendingTimesheetDates' => $pendingTimesheetDatesBeforeCurrent,
+//             ];
+//         }
+//     }
+//     // dd($employeeTotalHours);
+//     return view('users/employeeHours', compact('employeeTotalHours'));
+// }
+// public function teamMateSheetHour($id)
+// {
+//     $projectId = $id;
+//     $timeEntries = TimeEntry::where('project_id', $projectId)
+//                     ->where('status', 1)
+//                     ->with('employee', 'addworkesEmployees')
+//                     ->get()
+//                     ->toArray();
+
+//     $employeeTotalHours = [];
+//     $currentDate = strtotime(date('Y-m-d'));
+
+//     foreach ($timeEntries as $timeEntry) {
+//         $employeeId = $timeEntry['employee']['id'];
+//         $employeeName = $timeEntry['employee']['name'];
+//         $totalHours = $timeEntry['total_hours'];
+
+//         // Filter relevant allocations
+//         $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
+//             return $allocation['employee_Id'] == $employeeId;
+//         });
+
+//         // Ensure $relevantEmployeeAllocation is not empty and is an array
+//         if (!empty($relevantEmployeeAllocation) && is_array($relevantEmployeeAllocation)) {
+//             $allocation = reset($relevantEmployeeAllocation);
+//             $employeeAllcationStartDate = $allocation['startdate'] ?? null;
+//             $employeeAllcationEndDate = $allocation['enddate'] ?? null;
+//         } else {
+//             $employeeAllcationStartDate = null;
+//             $employeeAllcationEndDate = null;
+//         }
+
+//         // Convert dates to timestamps
+//         $startDate = $employeeAllcationStartDate ? strtotime($employeeAllcationStartDate) : 0;
+//         $endDate = $employeeAllcationEndDate ? strtotime($employeeAllcationEndDate) : $currentDate;
+
+//         $mondaysCount = 0;
+//         $mondaysDates = [];
+//         $submittedTimesheetDates = [];
+//         $pendingTimesheetDates = [];
+//         $pendingTimesheetDatesBeforeCurrent = [];
+
+//         // Loop through dates from startDate to endDate
+//         for ($currentDateLoop = $startDate; $currentDateLoop <= $endDate; $currentDateLoop += 86400) {
+//             if (date('N', $currentDateLoop) == 1) {
+//                 $mondaysCount++;
+//                 $mondaysDates[] = date('Y-m-d', $currentDateLoop);
+//             }
+//         }
+
+//         // Get submitted timesheets for the given Mondays
+//         $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+//                              ->where('employee_id', $employeeId)
+//                              ->where('status', 1)
+//                              ->get();
+
+//         foreach ($submittedTimesheets as $timesheet) {
+//             $submittedTimesheetDates[] = $timesheet->date;
+//         }
+
+//         $submittedTimesheetsCount = count($submittedTimesheetDates);
+
+//         $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheetDates);
+
+//         foreach ($pendingTimesheetDates as $date) {
+//             if (strtotime($date) < $currentDate) {
+//                 $pendingTimesheetDatesBeforeCurrent[] = $date;
+//             }
+//         }
+
+//         $pendingTimesheetsCount = count($pendingTimesheetDatesBeforeCurrent);
+
+//         if (isset($employeeTotalHours[$employeeId])) {
+//             $employeeTotalHours[$employeeId]['total_hours'] += $totalHours;
+//         } else {
+//             $employeeTotalHours[$employeeId] = [
+//                 'name' => $employeeName,
+//                 'total_hours' => $totalHours,
+//                 'startDate' => $employeeAllcationStartDate,
+//                 'endDate' => $employeeAllcationEndDate,
+//                 'mondaysCount' => $mondaysCount,
+//                 'mondaysDates' => $mondaysDates,
+//                 'submittedTimesheetsCount' => $submittedTimesheetsCount,
+//                 'submittedTimesheetDates' => $submittedTimesheetDates,
+//                 'pendingTimesheetsCount' => $pendingTimesheetsCount,
+//                 'pendingTimesheetDates' => $pendingTimesheetDatesBeforeCurrent,
+//             ];
+//         }
+//     }
+//     dd($employeeTotalHours);
+
+//     return view('users/employeeHours', compact('employeeTotalHours'));
+// }
+// public function teamMateSheetHour($id)
+// {
+//     $projectId = $id;
+//     $timeEntries = TimeEntry::where('project_id', $projectId)
+//                     ->where('status', 1)
+//                     ->with('employee', 'addworkesEmployees')
+//                     ->get()
+//                     ->toArray();
+
+//     $employeeTotalHours = [];
+//     $currentDate = strtotime(date('Y-m-d'));
+
+//     foreach ($timeEntries as $timeEntry) {
+//         $employeeId = $timeEntry['employee']['id'];
+//         $employeeName = $timeEntry['employee']['name'];
+//         $totalHours = $timeEntry['total_hours'];
+
+//         // Filter relevant allocations
+//         $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
+//             return $allocation['employee_Id'] == $employeeId;
+//         });
+
+//         // Default allocation dates if not available
+//         $employeeAllcationStartDate = null;
+//         $employeeAllcationEndDate = null;
+
+//         if (!empty($relevantEmployeeAllocation) && is_array($relevantEmployeeAllocation)) {
+//             $allocation = reset($relevantEmployeeAllocation);
+//             $employeeAllcationStartDate = $allocation['startdate'] ?? null;
+//             $employeeAllcationEndDate = $allocation['enddate'] ?? null;
+//         }
+
+//         // Convert dates to timestamps, handle defaults
+//         $startDate = $employeeAllcationStartDate ? strtotime($employeeAllcationStartDate) : 0;
+//         $endDate = $employeeAllcationEndDate ? strtotime($employeeAllcationEndDate) : $currentDate;
+
+//         $mondaysCount = 0;
+//         $mondaysDates = [];
+//         $submittedTimesheetDates = [];
+//         $pendingTimesheetDates = [];
+//         $pendingTimesheetDatesBeforeCurrent = [];
+
+//         // Loop through dates from startDate to endDate
+//         for ($currentDateLoop = $startDate; $currentDateLoop <= $endDate; $currentDateLoop += 86400) {
+//             if (date('N', $currentDateLoop) == 1) {
+//                 $mondaysCount++;
+//                 $mondaysDates[] = date('Y-m-d', $currentDateLoop);
+//             }
+//         }
+
+//         // Get submitted timesheets for the given Mondays
+//         $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
+//                              ->where('employee_id', $employeeId)
+//                              ->where('status', 1)
+//                              ->get();
+
+//         foreach ($submittedTimesheets as $timesheet) {
+//             $submittedTimesheetDates[] = $timesheet->date;
+//         }
+
+//         $submittedTimesheetsCount = count($submittedTimesheetDates);
+
+//         $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheetDates);
+
+//         foreach ($pendingTimesheetDates as $date) {
+//             if (strtotime($date) < $currentDate) {
+//                 $pendingTimesheetDatesBeforeCurrent[] = $date;
+//             }
+//         }
+
+//         $pendingTimesheetsCount = count($pendingTimesheetDatesBeforeCurrent);
+
+//         if (isset($employeeTotalHours[$employeeId])) {
+//             $employeeTotalHours[$employeeId]['total_hours'] += $totalHours;
+//         } else {
+//             $employeeTotalHours[$employeeId] = [
+//                 'name' => $employeeName,
+//                 'total_hours' => $totalHours,
+//                 'startDate' => $employeeAllcationStartDate,
+//                 'endDate' => $employeeAllcationEndDate,
+//                 'mondaysCount' => $mondaysCount,
+//                 'mondaysDates' => $mondaysDates,
+//                 'submittedTimesheetsCount' => $submittedTimesheetsCount,
+//                 'submittedTimesheetDates' => $submittedTimesheetDates,
+//                 'pendingTimesheetsCount' => $pendingTimesheetsCount,
+//                 'pendingTimesheetDates' => $pendingTimesheetDatesBeforeCurrent,
+//             ];
+//         }
+//     }
+
+//     // Debug output
+//     dd($employeeTotalHours);
+
+//     return view('users/employeeHours', compact('employeeTotalHours'));
+// }
+public function teamMateSheetHour($id)
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 {
     $projectId = $id;
     $timeEntries = TimeEntry::where('project_id', $projectId)
@@ -140,6 +408,7 @@ class TeammatesheetController extends Controller
         $employeeId = $timeEntry['employee']['id'];
         $employeeName = $timeEntry['employee']['name'];
         $totalHours = $timeEntry['total_hours'];
+<<<<<<< HEAD
         $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
             return $allocation['employee_Id'] == $employeeId;
         });
@@ -147,12 +416,38 @@ class TeammatesheetController extends Controller
         $employeeAllcationEndDate = reset($relevantEmployeeAllocation)['enddate'];
         $startDate = strtotime($employeeAllcationStartDate);
         $endDate = strtotime($employeeAllcationEndDate);
+=======
+
+        // Filter relevant allocations
+        $relevantEmployeeAllocation = array_filter($timeEntry['addworkes_employees'], function ($allocation) use ($employeeId) {
+            return $allocation['employee_Id'] == $employeeId;
+        });
+
+        // Default allocation dates if not available
+        $employeeAllcationStartDate = null;
+        $employeeAllcationEndDate = null;
+
+        if (!empty($relevantEmployeeAllocation) && is_array($relevantEmployeeAllocation)) {
+            $allocation = reset($relevantEmployeeAllocation);
+            $employeeAllcationStartDate = $allocation['startdate'] ?? null;
+            $employeeAllcationEndDate = $allocation['enddate'] ?? null;
+        }
+
+        // Convert dates to timestamps, handle defaults
+        $startDate = $employeeAllcationStartDate ? strtotime($employeeAllcationStartDate) : $currentDate - (365 * 86400); // Default to 1 year ago
+        $endDate = $employeeAllcationEndDate ? strtotime($employeeAllcationEndDate) : $currentDate;
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $mondaysCount = 0;
         $mondaysDates = [];
         $submittedTimesheetDates = [];
         $pendingTimesheetDates = [];
         $pendingTimesheetDatesBeforeCurrent = [];
 
+<<<<<<< HEAD
+=======
+        // Ensure loop runs only within a reasonable range
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         for ($currentDateLoop = $startDate; $currentDateLoop <= $endDate; $currentDateLoop += 86400) {
             if (date('N', $currentDateLoop) == 1) {
                 $mondaysCount++;
@@ -160,6 +455,10 @@ class TeammatesheetController extends Controller
             }
         }
 
+<<<<<<< HEAD
+=======
+        // Get submitted timesheets for the given Mondays
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $submittedTimesheets = TimeEntry::whereIn('date', $mondaysDates)
                              ->where('employee_id', $employeeId)
                              ->where('status', 1)
@@ -168,6 +467,10 @@ class TeammatesheetController extends Controller
         foreach ($submittedTimesheets as $timesheet) {
             $submittedTimesheetDates[] = $timesheet->date;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $submittedTimesheetsCount = count($submittedTimesheetDates);
 
         $pendingTimesheetDates = array_diff($mondaysDates, $submittedTimesheetDates);
@@ -197,9 +500,20 @@ class TeammatesheetController extends Controller
             ];
         }
     }
+<<<<<<< HEAD
     // dd($employeeTotalHours);
     return view('users/employeeHours', compact('employeeTotalHours'));
 }
+=======
+
+    // Debug output
+    // dd($employeeTotalHours);
+
+    return view('users/employeeHours', compact('employeeTotalHours'));
+}
+
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 public function fetchProjectData(Request $request)
 {
     $projectId = $request->input('project_id');

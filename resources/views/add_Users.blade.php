@@ -293,7 +293,11 @@
 
                 $.ajax({
 
+<<<<<<< HEAD
                     url: '/fetch-users/' + userDesignation,
+=======
+                    url: '/TMS/public/fetch-users/' + userDesignation,
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
                     type: 'GET',
 

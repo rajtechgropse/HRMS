@@ -147,6 +147,27 @@ class ReopenTimesheetController extends Controller
     //     }
     // }
 
+<<<<<<< HEAD
+=======
+    public function updateAdminApprovalStatus(Request $request)
+    {
+        $status = $request->input('status');
+        $status2 = $request->input('status2');
+        $id = $request->input('id');
+
+        $timesheet = TimeEntry::find($id);
+        if ($timesheet) {
+            $timesheet->is_Admin = $status;
+            $timesheet->status = $status2;
+            $timesheet->save();
+
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 //     public function timesheetReOpen()
 // {
 //     $userDetails = Auth::user()->userDepartment;
@@ -219,6 +240,7 @@ public function timesheetReOpen()
     }
 }
 
+<<<<<<< HEAD
 
     public function updateAdminApprovalStatus(Request $request)
     {
@@ -238,4 +260,6 @@ public function timesheetReOpen()
 
         return response()->json(['success' => false]);
     }
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 }

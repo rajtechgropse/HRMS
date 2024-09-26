@@ -154,10 +154,18 @@
     <!-- Include Bootstrap JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
+<<<<<<< HEAD
         // $(document).ready(function() {
         //     // Handle search input and AJAX request
         //     $('#searchInput').on('keyup', function() {
         //         let searchQuery = $(this).val();
+=======
+      
+        // $(document).ready(function() {
+        //     // Handle search input and AJAX request
+        //     $('#searchInput').on('keyup', function() {
+        //         let searchQuery = $(this).val().trim(); // Trim whitespace
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
 
         //         if (searchQuery.length >= 2) { // Start searching after 2 characters
         //             $.ajax({
@@ -173,6 +181,7 @@
         //                     if (data.data.length > 0) {
         //                         data.data.forEach((employee, index) => {
         //                             tableBody.append(`
+<<<<<<< HEAD
         //                             <tr>
         //                                 <td><input type="checkbox" class="checkbox_id" value="${employee.id}"></td>
         //                                 <td>${index + 1}</td>
@@ -192,6 +201,31 @@
         //                                 </td>
         //                             </tr>
         //                         `);
+=======
+        //                         <tr>
+        //                             <td><input type="checkbox" class="checkbox_id" value="${employee.id}"></td>
+        //                             <td>${index + 1}</td>
+        //                             <td>${employee.empId}</td>
+        //                             <td>${employee.name}</td>
+        //                             <td>${employee.department ? employee.department : '0'}</td> <!-- Default to '0' if no department -->
+        //                             <td>${employee.designation}</td>
+        //                             <td>${employee.reportingmanager}</td>
+        //                             <td>${employee.officialemail}</td>
+        //                             <td>${employee.personalemail}</td>
+        //                             <td>
+        //                                 @if (isset($modules[3]['employeeView.edit']) && $modules[3]['employeeView.edit'] == 1)
+        //                                     <a href="/employeeManagementUpdate/${employee.id}" class="btn btn-success btn-sm">
+        //                                         <i class="fas fa-edit"></i> Edit
+        //                                     </a>
+
+        //                                 @endif
+        //                                 <a href="{{ route('employeeAllcation', '__id__') }}" class="btn btn-primary btn-sm">
+        //                                     <i class="fa fa-eye btn-primary"></i>
+        //                                 </a>
+        //                             </td>
+        //                         </tr>
+        //                     `.replace('__id__', employee.id)); // Replace placeholder with actual ID
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         //                         });
         //                     } else {
         //                         tableBody.append(
@@ -200,6 +234,11 @@
         //                 },
         //                 error: function(xhr) {
         //                     console.log('AJAX error:', xhr.responseText);
+<<<<<<< HEAD
+=======
+        //                     $('#employeeTableBody').empty().append(
+        //                         '<tr><td colspan="10">Error retrieving data.</td></tr>');
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         //                 }
         //             });
         //         } else {
@@ -243,7 +282,11 @@
                                     <td>${employee.personalemail}</td>
                                     <td>
                                         @if (isset($modules[3]['employeeView.edit']) && $modules[3]['employeeView.edit'] == 1)
+<<<<<<< HEAD
                                             <a href="/employeeManagementUpdate/${employee.id}" class="btn btn-success btn-sm">
+=======
+                                            <a href="{{ route('employeeupdate', '__id__') }}" class="btn btn-success btn-sm">
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
                                         @endif
@@ -252,7 +295,11 @@
                                         </a>
                                     </td>
                                 </tr>
+<<<<<<< HEAD
                             `.replace('__id__', employee.id)); // Replace placeholder with actual ID
+=======
+                            `.replace(/__id__/g, employee.id)); // Replace placeholders with actual IDs
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                         });
                     } else {
                         tableBody.append('<tr><td colspan="10">No employees found.</td></tr>');
@@ -268,11 +315,19 @@
         }
     });
 
+<<<<<<< HEAD
+=======
+    // Select/Deselect all checkboxes
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
     $('#selectAllCheckbox').on('change', function() {
         $('.checkbox_id').prop('checked', this.checked);
     });
 });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
         $('#statusSelect').on('change', function() {
             let status = $(this).val();
             $.ajax({
@@ -299,9 +354,15 @@
                             <td>${employee.personalemail}</td>
                             <td>
                                 @if (isset($modules[3]['employeeView.edit']) && $modules[3]['employeeView.edit'] == 1)
+<<<<<<< HEAD
                                     <a href="/employeeManagementUpdate/${employee.id}" class="btn btn-success btn-sm">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
+=======
+                                     <a href="{{ route('employeeupdate', '__id__') }}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                 @endif
                                 <a href="{{ route('employeeAllcation', '__id__') }}" class="btn btn-primary btn-sm">
                                     <i class="fa fa-eye btn-primary"></i>

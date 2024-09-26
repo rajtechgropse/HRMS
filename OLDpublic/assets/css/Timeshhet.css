@@ -1,0 +1,64 @@
+.draw_box {
+    height: 35px;
+    background-color: cyan;
+}
+.box_same{
+    width: 9%;
+    height: 48px;
+    background-color: rgb(69, 181, 225);
+    padding: 10px;
+    color: white;
+}
+.box_same2{
+    width: 9%;
+    height: 48px;
+    background-color: rgb(167, 222, 241);
+    padding: 10px;
+    color:black;
+}
+.box_same3{
+    background-color: aliceblue;
+    width: 9%;
+    height: 48px;
+    padding: 10px;
+    color:black;
+    box-shadow: inset;
+}
+.box_same3_plusicon{
+    background-color: aliceblue;
+    width: 9%;
+    height: 48px;
+    color:black;
+    box-shadow: inset;
+}
+.box_same3 button{
+    border-radius: 5px;
+    padding: 5px 10px;
+    position: relative;
+    bottom: 5px;
+}
+.box_same3_plusicon span{
+    font-size: 25px;
+    font-weight: 900;
+    background-color: rgb(174, 99, 244);
+    border-radius: 80px;
+    padding: 2px 6px 6px 6px ;
+    margin-inline: 15px;
+    margin-top: 10px;
+}
+.description_main{
+    background-color: aliceblue;
+    margin-block: 20px;
+}
+.manage_description{
+    width: 10%;
+}
+.manage_description_input{
+    width: 80%;
+}
+.file_upload_input [type="file"]{
+    display: none;
+}
+.file_upload_label{
+    display: inline-block;
+}

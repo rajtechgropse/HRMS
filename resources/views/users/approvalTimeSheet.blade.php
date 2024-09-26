@@ -85,6 +85,7 @@
                                                         <td>{{ $timeEntry['projectName'] }}</td>
                                                         <td>{{ $timeEntry['total_hours'] }}</td>
                                                         <td>
+<<<<<<< HEAD
                                                             <a href="{{ route('description', ['id' => $timeEntry['timesheetId']]) }}"
                                                                 class="btn btn-view">
                                                                 <i class="fa fa-eye text-primary"></i>
@@ -99,6 +100,22 @@
                                                                 <a class="btn btn-sm btn-danger">Rejected</a>
                                                             @elseif($timeEntry['status'] == 3)
                                                                 <a class="btn btn-sm btn-primary">Reopen</a>
+=======
+                                                        <a href="{{ route('description', ['id' => $timeEntry['timesheetId']]) }}" class="btn btn-view">
+                                                            <i class="fa fa-eye text-primary"></i>
+                                                        </a>
+                                                    </td>
+                                                        <td>
+                                                            @if ($timeEntry['status'] == 1)
+                                                                <button id="status-toggle" class="btn btn-sm btn-success"
+                                                                    type="submit" value="0">Approved</button>
+                                                            @elseif($timeEntry['status'] == 0)
+                                                                <button id="status-toggle" class="btn btn-sm btn-warning"
+                                                                    type="submit" value="1">Pending</button>
+                                                            @elseif($timeEntry['status'] == 2)
+                                                                <button id="status-toggle" class="btn btn-sm btn-danger"
+                                                                    type="submit" value="1">Rejected</button>
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                                             @endif
                                                         </td>
                                                         <td>
@@ -269,7 +286,11 @@
                         if (data.length === 0) {
                             $('#projectDataBody').append(
                                 '<tr><td colspan="7" class="text-center">No data found</td></tr>'
+<<<<<<< HEAD
                             );
+=======
+                                );
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                         } else {
                             $.each(data, function(index, entry) {
                                 var statusText, statusClass, buttonText, actionButtons;
@@ -311,6 +332,11 @@
                                     '<td>' + entry.employee.name + '</td>' +
                                     '<td>' + entry.project.projectname + '</td>' +
                                     '<td>' + entry.total_hours + '</td>' +
+<<<<<<< HEAD
+=======
+
+                                   
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                                     '<td>' + button + '</td>' +
                                     '<td>' + actionButtons + '</td>' +
                                     '</tr>';

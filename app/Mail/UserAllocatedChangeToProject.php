@@ -46,7 +46,10 @@ class UserAllocatedChangeToProject extends Mailable
     {
         return $this->view('emails.userAllocatedChangeToProject')
                     ->subject('Your Project Allocation Has Been Updated')
+<<<<<<< HEAD
                     ->from('tms@techgropse.com', 'TMS Team') 
+=======
+>>>>>>> 2383766d697e5d985a8032ea182a27c084eead1c
                     ->with([
                         'employeeName' => $this->employee->name,
                         'projectName' => $this->project->projectname,
